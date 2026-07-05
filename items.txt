@@ -1,0 +1,199 @@
+sudo apt update
+sudo apt full-upgrade -y
+
+sudo apt install -y \
+build-essential \
+curl \
+wget \
+git \
+pkg-config \
+cmake \
+meson \
+ninja-build \
+ca-certificates \
+ripgrep \
+fd-find \
+fzf \
+eza \
+btop \
+htop \
+tree \
+vim \
+tmux
+
+sudo apt install -y \
+libwayland-dev \
+libxkbcommon-dev \
+libinput-dev \
+libdisplay-info-dev \
+libseat-dev \
+libpixman-1-dev \
+libgbm-dev \
+libegl1-mesa-dev \
+libpipewire-0.3-dev \
+libpango1.0-dev \
+libglib2.0-dev \
+libdbus-1-dev \
+libsystemd-dev \
+wayland-protocols \
+libxcb-cursor-dev
+
+Duf
+sudo apt install -y \
+clang \
+libclang-dev
+
+cd ~
+
+git clone https://github.com/YaLTeR/niri.git
+
+cd niri
+cargo clean
+cargo build --release
+
+sudo install -Dm755 target/release/niri /usr/local/bin/niri
+cd ~
+
+git clone https://github.com/Supreeeme/xwayland-satellite.git
+
+cd xwayland-satellite
+
+cargo build --release
+
+sudo install -Dm755 target/release/xwayland-satellite /usr/local/bin/xwayland-satellite
+
+
+Foot
+sudo apt install -y \
+pipewire \
+wireplumber \
+pipewire-pulse \
+pipewire-alsa \
+libspa-0.2-bluetooth
+
+systemctl --user enable --now pipewire.socket
+systemctl --user enable --now pipewire-pulse.socket
+systemctl --user enable --now wireplumber.service
+
+Apt install pulseaudio-utils
+sudo apt install mako-notifier
+sudo apt install fuzzel
+sudo systemctl stop unattended-upgrades
+sudo systemctl disable unattended-upgrades
+
+Stops unwanted gnome gui
+sudo apt install -y \
+xdg-desktop-portal \
+xdg-desktop-portal-gtk \
+sudo apt install pcmanfm waybar
+sudo apt install wl-clipboard cliphist
+sudo apt install brightnessctl network-manager-gnome
+sudo apt install -y \
+python3 \
+python3-pip \
+python3-venv \
+sudo apt install -y \
+fonts-noto \
+fonts-noto-cjk \
+fonts-noto-color-emoji \
+fonts-dejavu-core
+
+mkdir -p ~/.local/share/fonts
+
+fc-cache -fv
+
+curl -fsSL https://github.com/zen-browser/updates-server/raw/refs/heads/main/install.sh | bash
+~/.tarball-installations/zen/zen
+~/.local/bin/zen
+
+sudo apt install fish zoxide
+mkdir -p ~/.config/fish
+
+echo 'zoxide init fish | source' >> ~/.config/fish/config.fish
+
+chsh -s $(which fish)
+To make fish a permanent
+ Mkdir -p nextgen
+Python3 -m venv nextgen/bin/activate.fish
+pip install \
+numpy \
+pandas \
+matplotlib \
+scipy \
+scikit-learn \
+pip install \
+  --index-url https://download.pytorch.org/whl/cpu \
+  torch torchvision torchaudio
+python -m ipykernel install \
+  --user \
+  --name nextgen \
+  --display-name "Python (AI Base)"
+pip install --upgrade pip
+pip install \
+jupyterlab \
+ipykernel \
+ipython \
+Sudo apt install unzip
+mkdir -p ~/.local/share/fnm
+
+curl -fsSL https://github.com/Schniz/fnm/releases/latest/download/fnm-linux.zip -o /tmp/fnm.zip
+
+cd /tmp
+unzip fnm.zip
+
+mv fnm ~/.local/share/fnm/
+chmod +x ~/.local/share/fnm/fnm
+
+nvim ~/.config/fish/conf.d/fnm.fish
+
+set -gx PATH ~/.local/share/fnm $PATH
+fnm env --use-on-cd --shell fish | source
+
+source ~/.config/fish/conf.d/fnm.fish
+
+fnm install --lts
+fnm default lts-latest
+
+fnm env --use-on-cd --shell fish | source
+wget -O ~/Downloads/code.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
+sudo apt install ~/Downloads/code.deb
+code --enable-features=UseOzonePlatform --ozone-platform=wayland
+
+git config --global user.name "Harsha Vardhan"
+git config --global user.email "harshajaya13@gmail.com"
+git config --global init.defaultBranch main
+                     git config --global pull.rebase false
+git config --list
+ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL"
+use pass
+eval (ssh-agent -c)
+ssh-add ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.config/fish/config.fish
+fish_add_path ~/.local/bin
+set LAZYGIT_VERSION (curl -s https://api.github.com/repos/jesseduffield/lazygit/releases/latest | grep -Po '"tag_name": "v\K[^"]*')
+curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_{$LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+
+tar xf lazygit.tar.gz lazygit
+
+sudo install lazygit /usr/local/bin
+
+rm lazygit lazygit.tar.gz
+
+lazygit --version
+
+cd /tmp
+
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+
+sudo rm -rf /opt/nvim
+
+sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+
+sudo ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+
+mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
+
+git clone https://github.com/nvim-lua/kickstart.nvim.git ~/.config/nvim
+ cargo install tree-sitter-cli
