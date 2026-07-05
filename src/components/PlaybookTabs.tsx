@@ -27,8 +27,8 @@ export default function PlaybookTabs({ activeTab, onSelectTab, counts = {} }: Pl
   ];
 
   return (
-    <div className="border-b border-zinc-900 bg-[#0d0e12]/90 sticky top-14 z-30 backdrop-blur-md overflow-x-auto no-scrollbar font-sans">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center gap-6 min-w-max">
+    <div className="border-b border-white/[0.04] bg-[#0f1114]/90 sticky top-14 z-30 backdrop-blur-md overflow-x-auto no-scrollbar font-sans">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center gap-8 min-w-max">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -36,13 +36,13 @@ export default function PlaybookTabs({ activeTab, onSelectTab, counts = {} }: Pl
               key={tab.id}
               onClick={() => onSelectTab(tab.id)}
               type="button"
-              className={`flex items-center gap-2 py-3.5 text-sm transition-all cursor-pointer select-none border-b-2 -mb-px ${
+              className={`flex items-center gap-2 py-4 text-sm transition-all cursor-pointer select-none border-b-2 -mb-px ${
                 isActive
-                  ? 'border-white text-white font-medium'
-                  : 'border-transparent text-zinc-500 hover:text-zinc-300'
+                  ? 'border-[#5EEAD4] text-white font-medium'
+                  : 'border-transparent text-[#a8adb5] hover:text-zinc-200'
               }`}
             >
-              <span className={isActive ? 'text-zinc-200' : 'text-zinc-500'}>{tab.icon}</span>
+              <span className={isActive ? 'text-[#5EEAD4]' : 'text-zinc-500'}>{tab.icon}</span>
               <span>{tab.label}</span>
               {tab.count !== undefined && tab.count > 0 && (
                 <span

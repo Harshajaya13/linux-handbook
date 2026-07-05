@@ -2,9 +2,15 @@
 
 @layer base {
   :root {
-    --background: #0d0e12;
-    --foreground: #e4e4e7;
+    /* Apple-restraint: soft dark base with a whisper of blue-gray (#0F1114) */
+    --background: #0f1114;
+    /* Soft floating surface one step lighter (#17191D) */
+    --surface: #17191d;
+    /* Off-white body text (#A8ADB5), avoiding harsh pure white on dark */
+    --foreground: #a8adb5;
+    /* Clean humanist sans */
     --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+    /* Monospace strictly reserved for code, commands, paths */
     --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     --font-display: var(--font-space), var(--font-inter), system-ui, sans-serif;
   }
@@ -15,9 +21,10 @@
     font-family: var(--font-sans);
   }
 
-  /* Headings use humanist/display sans with clean letter spacing */
+  /* Headings use humanist/display sans with clean letter spacing and off-white (#f4f4f5) */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    color: #f4f4f5;
     letter-spacing: -0.02em;
   }
 
@@ -33,7 +40,7 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #0d0e12;
+    background: #0f1114;
   }
 
   ::-webkit-scrollbar-thumb {

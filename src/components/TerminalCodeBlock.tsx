@@ -8,6 +8,7 @@ interface TerminalCodeBlockProps {
   label?: string;
   size?: 'sm' | 'md' | 'lg';
   showPrompt?: boolean;
+  isPrimary?: boolean;
 }
 
 const COMMANDS_SET = new Set([
@@ -25,9 +26,11 @@ export default function TerminalCodeBlock({
   code,
   label = 'Copy',
   size = 'md',
-  showPrompt = true
+  showPrompt = true,
+  isPrimary = false
 }: TerminalCodeBlockProps) {
   const lines = code.trim().split('\n');
+  const isPrimaryButton = label === 'Copy Install' || isPrimary;
 
   const highlightToken = (token: string, idx: number) => {
     if (!token || /^\s+$/.test(token)) {
@@ -93,12 +96,12 @@ export default function TerminalCodeBlock({
   };
 
   return (
-    <div className="rounded-xl bg-[#090a0f] border border-zinc-800/90 p-4 sm:p-5 font-mono relative group shadow-inner transition-all hover:border-zinc-700">
-      <div className="absolute top-3.5 right-3.5 z-10 opacity-70 group-hover:opacity-100 transition-opacity">
-        <CopyButton text={code} label={label} size="sm" />
+    <div className="rounded-xl bg-[#17191d] border border-white/[0.04] p-4 sm:p-6 font-mono relative group shadow-[0_8px_24px_rgba(0,0,0,0.4)] transition-all hover:border-white/[0.08]">
+      <div className="absolute top-3.5 right-3.5 z-10 opacity-80 group-hover:opacity-100 transition-opacity">
+        <CopyButton text={code} label={label} size="sm" isPrimary={isPrimaryButton} />
       </div>
 
-      <div className={`space-y-1.5 overflow-x-auto pr-20 ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-xs sm:text-sm'} leading-relaxed`}>
+      <div className={`space-y-1.5 overflow-x-auto pr-24 ${size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : 'text-xs sm:text-sm'} leading-relaxed`}>
         {lines.map((line, lineIdx) => {
           const trimmed = line.trim();
 
@@ -112,7 +115,7 @@ export default function TerminalCodeBlock({
                 {showPrompt && (
                   <span className="text-zinc-600 select-none mr-3 shrink-0">#</span>
                 )}
-                <span className="text-zinc-500 italic font-mono">
+                <span className="text-[#a8adb5] italic font-mono">
                   {trimmed.replace(/^#\s*/, '')}
                 </span>
               </div>
