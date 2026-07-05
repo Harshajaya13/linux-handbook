@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Problem } from '../../types/playbook';
-import { Wrench, ChevronDown, ChevronUp, AlertTriangle, CheckCircle, ExternalLink, Search } from 'lucide-react';
-import CopyButton from '../CopyButton';
+import { Wrench, ChevronDown, ChevronUp, AlertTriangle, CheckCircle, ExternalLink, Search, CheckCircle2 } from 'lucide-react';
+import TerminalCodeBlock from '../TerminalCodeBlock';
 
 interface ProblemsSectionProps {
   problems: Problem[];
@@ -49,35 +49,35 @@ export default function ProblemsSection({ problems, defaultOpenId }: ProblemsSec
 
   if (problems.length === 0) {
     return (
-      <div className="p-12 text-center rounded-2xl bg-zinc-900/40 border border-zinc-800/80 space-y-3">
+      <div className="p-10 text-center rounded-2xl bg-zinc-900/30 border border-zinc-800/60 space-y-3 font-sans">
         <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
           <CheckCircle className="w-5 h-5" />
         </div>
         <h3 className="font-bold text-white text-base">No Common Problems Reported</h3>
         <p className="text-zinc-400 text-xs max-w-sm mx-auto">
-          This playbook has verified rock-solid stability on Ubuntu 24.04 LTS without major recurring installation bugs.
+          This software runs with verified rock-solid stability on Ubuntu 24.04 LTS without major recurring installation bugs.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="space-y-6 animate-in fade-in duration-200 font-sans">
       {/* Filter Bar */}
       {problems.length > 1 && (
-        <div className="relative flex items-center px-4 py-2.5 rounded-xl bg-zinc-900/80 border border-zinc-800">
+        <div className="relative flex items-center px-4 py-2.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80">
           <Search className="w-4 h-4 text-zinc-500 mr-2.5 shrink-0" />
           <input
             type="text"
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
-            placeholder="Filter problems by symptom, error code, or keyword... (e.g. wayland, lock, permission)"
+            placeholder="Filter solution cards by keyword, symptom, or error code... (e.g. xwayland, lock, permission)"
             className="w-full bg-transparent text-sm text-white placeholder-zinc-500 focus:outline-none"
           />
         </div>
       )}
 
-      {/* Problems List */}
+      {/* Solution Cards (No loud borders! Soft gray! Calm terminal blocks!) */}
       <div className="space-y-4">
         {filteredProblems.map((prob) => {
           const isOpen = openIds.has(prob.id);
@@ -87,23 +87,23 @@ export default function ProblemsSection({ problems, defaultOpenId }: ProblemsSec
             <div
               key={prob.id}
               id={`problem-${prob.id}`}
-              className={`rounded-2xl border transition-all overflow-hidden ${
+              className={`rounded-2xl transition-all overflow-hidden ${
                 isHighlighted
-                  ? 'border-amber-500/60 bg-amber-500/5 shadow-[0_0_20px_rgba(245,158,11,0.15)] ring-1 ring-amber-500/30'
-                  : 'border-zinc-800 bg-zinc-900/60 hover:border-zinc-700/80'
+                  ? 'border border-amber-500/40 bg-amber-500/5 shadow-md'
+                  : 'border border-zinc-800/80 bg-zinc-900/30 hover:border-zinc-700/80'
               }`}
             >
               {/* Header Toggle */}
               <button
                 onClick={() => toggleOpen(prob.id)}
                 type="button"
-                className="w-full p-5 sm:p-6 flex items-start justify-between gap-4 text-left cursor-pointer select-none bg-zinc-900/90 hover:bg-zinc-900 transition-colors"
+                className="w-full p-5 sm:p-6 flex items-start justify-between gap-4 text-left cursor-pointer select-none bg-zinc-900/40 hover:bg-zinc-900/80 transition-colors"
               >
-                <div className="flex items-start gap-3.5">
+                <div className="flex items-start gap-3.5 min-w-0">
                   <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0 mt-0.5">
-                    <AlertTriangle className="w-5 h-5" />
+                    <AlertTriangle className="w-4 h-4" />
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-1 min-w-0">
                     <h3 className="font-bold text-white text-base sm:text-lg leading-snug">
                       {prob.title}
                     </h3>
@@ -112,7 +112,7 @@ export default function ProblemsSection({ problems, defaultOpenId }: ProblemsSec
                         {prob.symptoms.map((symptom, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700/80 text-[11px] font-mono text-zinc-300"
+                            className="inline-flex items-center px-2 py-0.5 rounded bg-zinc-800/80 border border-zinc-700/60 text-[11px] font-mono text-zinc-300"
                           >
                             {symptom}
                           </span>
@@ -127,48 +127,61 @@ export default function ProblemsSection({ problems, defaultOpenId }: ProblemsSec
                 </div>
               </button>
 
-              {/* Collapsible Content */}
+              {/* Solution Content */}
               {isOpen && (
-                <div className="p-5 sm:p-6 border-t border-zinc-800/80 space-y-6 bg-zinc-950/60">
+                <div className="p-5 sm:p-6 border-t border-zinc-800/60 space-y-6 bg-zinc-950/30">
                   {/* Cause */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-amber-400 font-mono text-xs uppercase tracking-wider font-bold">
-                      <span>Root Cause</span>
+                  <div className="space-y-1.5">
+                    <div className="text-zinc-400 font-mono text-xs uppercase tracking-wider font-bold">
+                      Root Cause
                     </div>
-                    <p className="text-zinc-300 text-sm sm:text-base leading-relaxed font-sans bg-zinc-900/80 p-3.5 rounded-xl border border-zinc-800/80">
+                    <p className="text-zinc-300 text-sm sm:text-base leading-relaxed bg-zinc-900/40 p-3.5 rounded-xl border border-zinc-800/60">
                       {prob.cause}
                     </p>
                   </div>
 
-                  {/* Solution */}
+                  {/* Solution & Commands */}
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs uppercase tracking-wider font-bold">
                       <CheckCircle className="w-4 h-4" />
-                      <span>Verified Fix & Solution</span>
+                      <span>Verified Solution</span>
                     </div>
-                    <p className="text-zinc-200 text-sm sm:text-base leading-relaxed font-sans font-medium">
+                    <p className="text-white text-sm sm:text-base leading-relaxed font-semibold">
                       {prob.solution}
                     </p>
 
-                    {/* Commands Box */}
+                    {/* Calm Terminal Block without decorative header banners */}
                     {prob.commands && prob.commands.length > 0 && (
-                      <div className="rounded-xl border border-zinc-800 bg-zinc-950 overflow-hidden font-mono mt-2">
-                        <div className="flex items-center justify-between px-4 py-2.5 bg-zinc-900/90 border-b border-zinc-800">
-                          <span className="text-xs text-zinc-500 uppercase font-bold">
-                            Resolution Terminal Commands
-                          </span>
-                          <CopyButton text={prob.commands.join('\n')} label="Copy Fix" size="sm" />
-                        </div>
-                        <pre className="p-4 text-xs sm:text-sm text-emerald-300 overflow-x-auto whitespace-pre-wrap leading-relaxed select-all">
-                          {prob.commands.join('\n')}
-                        </pre>
+                      <div className="pt-1">
+                        <TerminalCodeBlock
+                          code={prob.commands.join('\n')}
+                          label="Copy Fix"
+                          size="sm"
+                          showPrompt={true}
+                        />
                       </div>
                     )}
                   </div>
 
+                  {/* Verification Step */}
+                  {prob.verificationCommand && (
+                    <div className="space-y-2 pt-2 border-t border-zinc-800/60 font-mono">
+                      <div className="flex items-center gap-2 text-cyan-300 text-xs sm:text-sm font-bold font-sans">
+                        <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0" />
+                        <span>Verify Fix Success</span>
+                      </div>
+                      <TerminalCodeBlock
+                        code={prob.verificationCommand}
+                        label="Copy Verify"
+                        size="sm"
+                        showPrompt={true}
+                      />
+                    </div>
+                  )}
+
                   {/* Explanation */}
                   {prob.explanation && (
-                    <div className="pt-2 border-t border-zinc-900 text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                    <div className="pt-2 border-t border-zinc-900/80 text-xs sm:text-sm text-zinc-400 leading-relaxed font-sans">
                       <strong className="text-zinc-300">Why this works: </strong>
                       {prob.explanation}
                     </div>
@@ -176,7 +189,7 @@ export default function ProblemsSection({ problems, defaultOpenId }: ProblemsSec
 
                   {/* References */}
                   {prob.references && prob.references.length > 0 && (
-                    <div className="pt-3 border-t border-zinc-900 flex flex-wrap items-center gap-4 text-xs font-mono">
+                    <div className="pt-2 border-t border-zinc-900/80 flex flex-wrap items-center gap-4 text-xs font-mono">
                       <span className="text-zinc-500">References:</span>
                       {prob.references.map((ref, idx) => (
                         <a

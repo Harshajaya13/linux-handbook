@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { UninstallCommands } from '../../types/playbook';
-import { Trash2, ShieldAlert, AlertCircle, Sparkles } from 'lucide-react';
-import CopyButton from '../CopyButton';
+import { Trash2, ShieldAlert, AlertCircle } from 'lucide-react';
+import TerminalCodeBlock from '../TerminalCodeBlock';
 
 interface RemoveSectionProps {
   uninstall: UninstallCommands;
@@ -17,8 +17,8 @@ export default function RemoveSection({ uninstall, playbookName }: RemoveSection
       title: uninstall.normal.title,
       command: uninstall.normal.command,
       description: uninstall.normal.description,
-      icon: <Trash2 className="w-5 h-5 text-amber-400" />,
-      badgeClass: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
+      icon: <Trash2 className="w-4 h-4 text-amber-400" />,
+      badgeClass: 'bg-amber-500/10 border-amber-500/30 text-amber-400 font-bold',
       badgeText: 'Tier 1: Standard Remove'
     },
     {
@@ -26,8 +26,8 @@ export default function RemoveSection({ uninstall, playbookName }: RemoveSection
       title: uninstall.removeConfig.title,
       command: uninstall.removeConfig.command,
       description: uninstall.removeConfig.description,
-      icon: <AlertCircle className="w-5 h-5 text-orange-400" />,
-      badgeClass: 'bg-orange-500/10 border-orange-500/30 text-orange-400',
+      icon: <AlertCircle className="w-4 h-4 text-orange-400" />,
+      badgeClass: 'bg-orange-500/10 border-orange-500/30 text-orange-400 font-bold',
       badgeText: 'Tier 2: Clean Dotfiles & Cache'
     },
     {
@@ -35,36 +35,36 @@ export default function RemoveSection({ uninstall, playbookName }: RemoveSection
       title: uninstall.completeCleanup.title,
       command: uninstall.completeCleanup.command,
       description: uninstall.completeCleanup.description,
-      icon: <ShieldAlert className="w-5 h-5 text-red-400" />,
-      badgeClass: 'bg-red-500/10 border-red-500/30 text-red-400',
+      icon: <ShieldAlert className="w-4 h-4 text-red-400" />,
+      badgeClass: 'bg-red-500/10 border-red-500/30 text-red-400 font-bold',
       badgeText: 'Tier 3: Complete Purge & Wipe'
     }
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-200">
+    <div className="space-y-6 animate-in fade-in duration-200 font-sans">
       {/* Introduction */}
-      <div className="p-6 rounded-2xl bg-red-500/5 border border-red-500/20 space-y-2">
-        <h3 className="text-sm font-mono uppercase tracking-wider text-red-400 font-bold flex items-center gap-2">
+      <div className="p-5 rounded-2xl bg-red-500/5 border border-red-500/20 space-y-1.5">
+        <h3 className="text-xs font-mono uppercase tracking-wider text-red-400 font-bold flex items-center gap-2">
           <ShieldAlert className="w-4 h-4" />
-          <span>Uninstall & Clean System Cleanup</span>
+          <span>Clean System Uninstall & Purge</span>
         </h3>
         <p className="text-zinc-300 text-sm leading-relaxed">
-          One of the biggest headaches on Linux is leaving orphaned config files, dangling GPG keys, and stale cache directories when you remove software. Use these exact commands to uninstall {playbookName} cleanly according to your needs.
+          One of the biggest headaches on Linux is leaving orphaned config files, dangling GPG keys, and stale cache directories when you remove software. Select the exact level of cleanup you need for {playbookName}.
         </p>
       </div>
 
-      {/* Cards */}
+      {/* Cards (No loud borders, calm Terminal blocks!) */}
       <div className="space-y-6">
         {tiers.map((tier) => (
           <div
             key={tier.key}
-            className="rounded-2xl border border-zinc-800 bg-zinc-900/60 hover:border-zinc-700/80 transition-all overflow-hidden shadow-lg"
+            className="rounded-2xl border border-zinc-800/80 bg-zinc-900/30 hover:border-zinc-700/80 transition-all overflow-hidden p-6 space-y-4"
           >
             {/* Header */}
-            <div className="p-5 sm:p-6 bg-zinc-900/90 border-b border-zinc-800 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-zinc-800 border border-zinc-700">
+                <div className="p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 shrink-0">
                   {tier.icon}
                 </div>
                 <div>
@@ -77,22 +77,22 @@ export default function RemoveSection({ uninstall, playbookName }: RemoveSection
                 </div>
               </div>
 
-              <span className={`px-3 py-1 rounded-full text-xs font-mono font-bold border ${tier.badgeClass}`}>
+              <span className={`px-2.5 py-1 rounded-full text-xs font-mono border ${tier.badgeClass}`}>
                 {tier.badgeText}
               </span>
             </div>
 
-            {/* Command Box */}
-            <div className="p-5 sm:p-6 bg-zinc-950/90 font-mono">
-              <div className="flex items-center justify-between gap-4 mb-3 pb-3 border-b border-zinc-800/80">
-                <span className="text-xs text-zinc-500 uppercase font-bold">
-                  Terminal Command
-                </span>
-                <CopyButton text={tier.command} label="Copy CMD" size="md" />
+            {/* Calm Terminal Command without decorative box header rows */}
+            <div className="space-y-1.5 pt-1">
+              <div className="text-xs font-mono text-zinc-500 uppercase font-bold">
+                Terminal Removal Command
               </div>
-              <pre className="text-sm sm:text-base text-red-300/90 overflow-x-auto whitespace-pre-wrap leading-relaxed py-1 select-all">
-                {tier.command}
-              </pre>
+              <TerminalCodeBlock
+                code={tier.command}
+                label="Copy CMD"
+                size="sm"
+                showPrompt={true}
+              />
             </div>
           </div>
         ))}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Terminal, Home, ChevronRight, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Terminal, Home, ChevronRight, AlertCircle, ArrowLeft, ExternalLink } from 'lucide-react';
 import { PLAYBOOKS } from '../data/playbooks';
 import PlaybookTabs, { TabType } from './PlaybookTabs';
 import OverviewSection from './sections/OverviewSection';
@@ -27,13 +27,13 @@ export default function PlaybookViewer({ slug }: PlaybookViewerProps) {
   const tabParam = searchParams.get('tab') as TabType;
   const problemIdParam = searchParams.get('problemId');
   
-  const [activeTab, setActiveTab] = useState<TabType>(tabParam || 'overview');
+  const [activeTab, setActiveTab] = useState<TabType>(tabParam || 'install');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
 
   const playbook = PLAYBOOKS.find((p) => p.slug === slug);
 
   useEffect(() => {
-    if (tabParam && ['overview', 'install', 'problems', 'alternatives', 'files', 'remove', 'notes'].includes(tabParam)) {
+    if (tabParam && ['install', 'overview', 'problems', 'alternatives', 'files', 'remove', 'notes'].includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [tabParam]);
@@ -45,7 +45,7 @@ export default function PlaybookViewer({ slug }: PlaybookViewerProps) {
 
   if (!playbook) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col justify-between">
+      <div className="min-h-screen bg-zinc-950 flex flex-col justify-between font-sans">
         <Navbar onOpenSearch={() => setIsSearchModalOpen(true)} />
         <div className="max-w-md mx-auto px-4 py-20 text-center space-y-4 animate-in fade-in">
           <div className="w-12 h-12 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto">
@@ -58,7 +58,7 @@ export default function PlaybookViewer({ slug }: PlaybookViewerProps) {
           <div className="pt-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-sm transition-colors shadow-lg"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white font-medium text-sm transition-colors shadow-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Search Homepage</span>
@@ -73,7 +73,7 @@ export default function PlaybookViewer({ slug }: PlaybookViewerProps) {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col justify-between selection:bg-emerald-500/30">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col justify-between selection:bg-emerald-500/20 font-sans">
       <Navbar onOpenSearch={() => setIsSearchModalOpen(true)} />
 
       {/* Search Modal */}
@@ -84,17 +84,76 @@ export default function PlaybookViewer({ slug }: PlaybookViewerProps) {
       />
 
       <main className="flex-1 pb-20">
-        {/* Breadcrumb Header */}
-        <div className="border-b border-zinc-900 bg-zinc-950/80">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-2 text-xs font-mono text-zinc-500 overflow-x-auto whitespace-nowrap">
-            <Link href="/" className="hover:text-zinc-300 transition-colors flex items-center gap-1">
-              <Home className="w-3.5 h-3.5" />
-              <span>Search</span>
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-zinc-700" />
-            <span className="text-zinc-400">{playbook.category}</span>
-            <ChevronRight className="w-3.5 h-3.5 text-zinc-700" />
-            <span className="text-emerald-400 font-bold">{playbook.name}</span>
+        {/* Breadcrumb & Top Bar */}
+        <div className="border-b border-zinc-900/80 bg-zinc-950">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4 flex-wrap text-xs font-mono text-zinc-500">
+            <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap">
+              <Link href="/" className="hover:text-zinc-300 transition-colors flex items-center gap-1">
+                <Home className="w-3.5 h-3.5" />
+                <span>Search</span>
+              </Link>
+              <ChevronRight className="w-3 h-3 text-zinc-700" />
+              <span className="text-zinc-400">{playbook.category}</span>
+              <ChevronRight className="w-3 h-3 text-zinc-700" />
+              <span className="text-emerald-500/90 font-medium">{playbook.name}</span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <span className="text-zinc-500">
+                Verified: <strong className="text-zinc-300">{playbook.overview.lastVerified || 'Ubuntu 24.04 LTS'}</strong>
+              </span>
+              <a
+                href={playbook.overview.officialWebsite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-zinc-400 hover:text-white transition-colors"
+              >
+                <span>Official Site</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Clean, Quiet Header (Hermes / Obsidian resting UI style) */}
+        <div className="border-b border-zinc-900/80 bg-zinc-950 pt-8 pb-6">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                  {playbook.name}
+                </h1>
+                <p className="text-sm sm:text-base text-zinc-400 mt-1 font-sans">
+                  {playbook.tagline}
+                </p>
+              </div>
+
+              {/* Quick Action: Muted sage/moss green primary button */}
+              {activeTab !== 'install' && !playbook.isUnsupported && (
+                <button
+                  onClick={() => handleTabChange('install')}
+                  type="button"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600/90 hover:bg-emerald-600 text-white font-medium text-xs font-mono transition-colors cursor-pointer shrink-0 shadow-sm"
+                >
+                  <Terminal className="w-3.5 h-3.5" />
+                  <span>Install Now</span>
+                </button>
+              )}
+            </div>
+
+            {/* Why choose this software? (Quiet neutral tags) */}
+            {playbook.whyChoose && playbook.whyChoose.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 pt-2">
+                {playbook.whyChoose.map((point, idx) => (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center px-2.5 py-1 rounded-md bg-zinc-900 border border-zinc-800/80 text-xs font-mono text-zinc-300 select-none"
+                  >
+                    {point}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -110,17 +169,17 @@ export default function PlaybookViewer({ slug }: PlaybookViewerProps) {
         />
 
         {/* Section Container */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-8">
+          {activeTab === 'install' && (
+            <InstallSection playbook={playbook} />
+          )}
+
           {activeTab === 'overview' && (
             <OverviewSection
               playbook={playbook}
               onGoToInstall={() => handleTabChange('install')}
               onGoToAlternatives={() => handleTabChange('alternatives')}
             />
-          )}
-
-          {activeTab === 'install' && (
-            <InstallSection playbook={playbook} />
           )}
 
           {activeTab === 'problems' && (
@@ -161,13 +220,13 @@ export default function PlaybookViewer({ slug }: PlaybookViewerProps) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-900 bg-zinc-950 py-10 text-center text-xs text-zinc-500 font-mono space-y-2">
-        <div className="flex items-center justify-center gap-2 text-zinc-400">
-          <Terminal className="w-4 h-4 text-emerald-400" />
+      <footer className="border-t border-zinc-900/80 bg-zinc-950 py-10 text-center text-xs text-zinc-600 font-mono space-y-2">
+        <div className="flex items-center justify-center gap-2 text-zinc-500">
+          <Terminal className="w-3.5 h-3.5 text-emerald-500/80" />
           <span className="font-bold tracking-wider uppercase">Linux Handbook Playbook</span>
         </div>
         <p>
-          Verified on Ubuntu 24.04 LTS Headless Server. Never make the user leave the page.
+          Action-first Linux playbook. Verified on Ubuntu 24.04 LTS Headless Server.
         </p>
       </footer>
     </div>

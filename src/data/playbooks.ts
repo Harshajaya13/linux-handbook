@@ -6,6 +6,13 @@ export const PLAYBOOKS: Playbook[] = [
     name: 'Niri',
     tagline: 'A scrollable-tiling Wayland compositor.',
     category: 'System & Drivers',
+    whyChoose: [
+      'Infinite scrolling ribbon workspace',
+      'Wayland native architecture',
+      'Keyboard driven workflow',
+      'Extremely lightweight & fast',
+      'No desktop environment bloat required'
+    ],
     overview: {
       whatIsIt: 'Niri is a modern, scrollable-tiling Wayland compositor inspired by PaperWM. Instead of a fixed grid, windows arrange in an infinite horizontal ribbon that you scroll through smoothly.',
       whoIsItFor: 'Power users and developers running Ubuntu 24.04 Server / Headless who want a keyboard-centric, hyper-fast, modern Wayland graphical environment without installing heavy desktop environments like GNOME or KDE.',
@@ -24,15 +31,17 @@ cd niri
 cargo clean
 cargo build --release
 sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
+        verificationCommand: `niri --version`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~45 MB (binary)',
         whyThisMethod: {
-          summary: 'Compiling from source via Cargo on Ubuntu 24.04 ensures you get the exact Wayland protocol bindings and maximum hardware performance.',
+          summary: 'Compiling directly via Cargo on Ubuntu 24.04 guarantees exact Wayland protocol binding and peak hardware rendering performance.',
           points: [
-            'Installs all required Wayland and systemd development headers.',
-            'Produces a standalone optimized binary placed directly into /usr/local/bin.',
-            'Ideal for minimal headless Ubuntu setups without pre-existing bloat.'
+            'Official source repository',
+            'Installs all necessary Wayland & systemd headers',
+            'Standalone optimized binary in /usr/local/bin',
+            'Tested for minimal headless Ubuntu setups'
           ]
         },
         sourceUrl: 'https://github.com/YaLTeR/niri'
@@ -44,12 +53,13 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
         title: 'Legacy X11 apps fail to launch or crash on start',
         symptoms: ['X11 apps fail silently', 'Error: cannot open display :0', 'Electron/Chromium apps crash without Wayland flags'],
         cause: 'Niri is a pure Wayland compositor and does not run a full root-level XWayland server by default.',
-        solution: 'Install and run xwayland-satellite to act as a rootless bridge for legacy X11 applications.',
+        solution: 'Install and run xwayland-satellite to act as an on-demand rootless bridge for legacy X11 applications.',
         commands: [
           'git clone https://github.com/Supreeeme/xwayland-satellite.git',
           'cd xwayland-satellite && cargo build --release',
           'sudo install -Dm755 target/release/xwayland-satellite /usr/local/bin/xwayland-satellite'
         ],
+        verificationCommand: `xwayland-satellite --version`,
         explanation: 'xwayland-satellite manages XWayland on demand without requiring root compositor privileges.',
         references: [{ title: 'XWayland Satellite GitHub', url: 'https://github.com/Supreeeme/xwayland-satellite' }]
       },
@@ -63,6 +73,7 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
           'sudo systemctl stop unattended-upgrades',
           'sudo systemctl disable unattended-upgrades'
         ],
+        verificationCommand: `systemctl status unattended-upgrades | grep Active`,
         explanation: 'Disabling automated upgrades gives you deterministic control over when package updates occur.'
       }
     ],
@@ -112,6 +123,12 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
     name: 'Zen Browser',
     tagline: 'Beautiful, privacy-focused desktop browser based on Firefox.',
     category: 'Productivity',
+    whyChoose: [
+      'Built on stable Firefox engine',
+      'Zero telemetry or background tracking',
+      'Vertical tabs & split view workspaces',
+      'Ultra-responsive keyboard navigation'
+    ],
     overview: {
       whatIsIt: 'Zen Browser is a modern, hyper-fast web browser built on Firefox. It features vertical tabs, split views, workspaces, and zero telemetry with an aesthetic interface.',
       whoIsItFor: 'Users who want an ultra-responsive, keyboard-friendly alternative to Chrome/Edge without sacrificing privacy or extension compatibility.',
@@ -124,15 +141,17 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
         id: 'official-script',
         distro: 'Ubuntu',
         command: `curl -fsSL https://github.com/zen-browser/updates-server/raw/refs/heads/main/install.sh | bash`,
+        verificationCommand: `~/.local/bin/zen --version`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~210 MB',
         whyThisMethod: {
-          summary: 'The official installation script automatically downloads the latest optimized tarball and sets up desktop integration.',
+          summary: 'Official automated installer script sets up optimized binaries and creates desktop application menu shortcuts.',
           points: [
-            'Installs binaries cleanly into ~/.tarball-installations/zen/zen.',
-            'Creates symlink in ~/.local/bin/zen for instant terminal access.',
-            'Automatic updates handled natively via Zen built-in updater.'
+            'Official installer script',
+            'Automatic updates via built-in updater',
+            'Installs cleanly to ~/.tarball-installations/zen/zen',
+            'Creates symlink in ~/.local/bin/zen'
           ]
         },
         sourceUrl: 'https://github.com/zen-browser'
@@ -150,6 +169,7 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
           '# Or for bash/zsh:',
           'echo "export MOZ_ENABLE_WAYLAND=1" >> ~/.profile'
         ],
+        verificationCommand: `echo $MOZ_ENABLE_WAYLAND`,
         explanation: 'Enabling Wayland natively allows Zen to render crisp fonts and handle touchscreen/touchpad gestures smoothly.'
       }
     ],
@@ -199,6 +219,13 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
     name: 'Neovim (Kickstart)',
     tagline: 'Hyperextensible Vim-based text editor built for modern terminal workflows.',
     category: 'Development',
+    whyChoose: [
+      '100% terminal-native IDE experience',
+      'Built-in Language Server Protocol (LSP)',
+      'Blazing fast ~5ms startup times',
+      'Kickstart Lua modular architecture',
+      'Zero GUI memory overhead'
+    ],
     overview: {
       whatIsIt: 'Neovim is a refactored, modern Vim distribution with built-in Language Server Protocol (LSP) support, Lua scripting, and asynchronous plugin execution.',
       whoIsItFor: 'Developers who want an IDE-level editing experience entirely inside the terminal with lightning-fast startup times.',
@@ -218,15 +245,17 @@ sudo ln -sf /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
 mv ~/.config/nvim ~/.config/nvim.bak 2>/dev/null
 git clone https://github.com/nvim-lua/kickstart.nvim.git ~/.config/nvim
 cargo install tree-sitter-cli`,
+        verificationCommand: `nvim --version && tree-sitter --version`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~35 MB',
         whyThisMethod: {
-          summary: 'Installing the official release tarball bypasses outdated Ubuntu apt repositories (which often ship ancient v0.8 or v0.9 builds).',
+          summary: 'Bypasses outdated Ubuntu apt repositories to provide the latest v0.10+ release with pre-configured Kickstart LSP & Treesitter.',
           points: [
-            'Places clean pre-compiled binaries into /opt/nvim.',
-            'Clones Kickstart.nvim for an instant, well-architected LSP and Treesitter starting point.',
-            'Installs tree-sitter-cli via Cargo for instant syntax highlighting compilation.'
+            'Latest official GitHub release binary in /opt/nvim',
+            'Clones Kickstart.nvim for instant LSP & Treesitter setup',
+            'Installs tree-sitter-cli via Cargo for grammar compilation',
+            'Backs up existing config automatically'
           ]
         },
         sourceUrl: 'https://github.com/neovim/neovim'
@@ -241,10 +270,9 @@ cargo install tree-sitter-cli`,
         solution: 'Install build-essential via apt and tree-sitter-cli via Cargo or npm.',
         commands: [
           'sudo apt install -y build-essential',
-          'cargo install tree-sitter-cli',
-          '# Verify in terminal:',
-          'tree-sitter --version'
+          'cargo install tree-sitter-cli'
         ],
+        verificationCommand: `tree-sitter --version`,
         explanation: 'With a C compiler and CLI ready, running :TSUpdate in Neovim will seamlessly compile all grammars.'
       },
       {
@@ -256,6 +284,7 @@ cargo install tree-sitter-cli`,
         commands: [
           'sudo apt install -y wl-clipboard cliphist'
         ],
+        verificationCommand: `wl-copy --version`,
         explanation: 'Once installed, Neovim automatically detects wl-copy / wl-paste without any Lua configuration changes.'
       }
     ],
@@ -306,6 +335,12 @@ cargo install tree-sitter-cli`,
     name: 'PipeWire Audio Stack',
     tagline: 'Low-latency multimedia server for audio and video routing on Linux.',
     category: 'System & Drivers',
+    whyChoose: [
+      'Modern replacement for PulseAudio & JACK',
+      'Flawless Wayland screen share capture',
+      'Intelligent Bluetooth codec switching',
+      'Ultra low latency for professional audio'
+    ],
     overview: {
       whatIsIt: 'PipeWire is the modern Linux multimedia server replacing PulseAudio and JACK. It provides seamless Bluetooth audio, pro-audio JACK compatibility, and Wayland screen-sharing capture via WirePlumber.',
       whoIsItFor: 'Every modern Linux user. Essential for Wayland screen sharing, Bluetooth headphones, and glitch-free audio routing.',
@@ -321,15 +356,17 @@ cargo install tree-sitter-cli`,
 systemctl --user enable --now pipewire.socket
 systemctl --user enable --now pipewire-pulse.socket
 systemctl --user enable --now wireplumber.service`,
+        verificationCommand: `pactl info | grep "Server Name"`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~15 MB',
         whyThisMethod: {
           summary: 'Installs the complete PipeWire stack with PulseAudio and ALSA emulation layers directly from official Ubuntu repositories.',
           points: [
-            'Enables systemd user sockets for automatic background daemon startup.',
-            'Includes WirePlumber session manager for intelligent Bluetooth codec selection.',
-            'Installs pulseaudio-utils so legacy commands like pactl continue working.'
+            'Official Ubuntu repositories',
+            'Enables user systemd background sockets',
+            'Includes WirePlumber intelligent session manager',
+            'Retains pulseaudio-utils for legacy pactl compatibility'
           ]
         },
         sourceUrl: 'https://gitlab.freedesktop.org/pipewire/pipewire'
@@ -344,10 +381,9 @@ systemctl --user enable --now wireplumber.service`,
         solution: 'Restart the user systemd audio sockets and verify WirePlumber status.',
         commands: [
           'systemctl --user restart pipewire.service pipewire-pulse.service wireplumber.service',
-          'systemctl --user status wireplumber.service',
-          '# Verify connected sinks:',
-          'pactl list short sinks'
+          'systemctl --user status wireplumber.service'
         ],
+        verificationCommand: `pactl list short sinks`,
         explanation: 'WirePlumber is responsible for discovering hardware audio endpoints and routing them to PipeWire.'
       }
     ],
@@ -385,6 +421,12 @@ systemctl --user enable --now wireplumber.service`,
     name: 'Fish Shell & Zoxide',
     tagline: 'Friendly interactive command line shell with smart auto-jumping.',
     category: 'System & Drivers',
+    whyChoose: [
+      'Smart syntax highlighting out of the box',
+      'History-based auto-suggestions without plugins',
+      'Fuzzy directory jumping with zoxide (z command)',
+      'Zero dotfiles configuration bloat'
+    ],
     overview: {
       whatIsIt: 'Fish (Friendly Interactive Shell) is a smart command line shell with out-of-the-box syntax highlighting, auto-suggestions based on history, and web-based configuration. Paired with Zoxide, it allows instant directory jumping using fuzzy keywords.',
       whoIsItFor: 'Developers and terminal enthusiasts who want modern shell productivity without spending hours tweaking complex bash/zsh dotfiles.',
@@ -400,15 +442,17 @@ systemctl --user enable --now wireplumber.service`,
 mkdir -p ~/.config/fish
 echo 'zoxide init fish | source' >> ~/.config/fish/config.fish
 chsh -s $(which fish)`,
+        verificationCommand: `fish --version && zoxide --version`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~25 MB',
         whyThisMethod: {
           summary: 'Installs Fish and Zoxide cleanly via apt, initializes Zoxide auto-jump hook, and sets Fish as your default login shell.',
           points: [
-            'Zero external script downloading required—uses stable Ubuntu repos.',
-            'Automatically appends zoxide init hook to ~/.config/fish/config.fish.',
-            'Changes default shell via chsh so next terminal login opens Fish automatically.'
+            'Official Ubuntu repository packages',
+            'Automatically configures zoxide init hook in config.fish',
+            'Sets default login shell via chsh',
+            'Zero external script downloads'
           ]
         },
         sourceUrl: 'https://fishshell.com'
@@ -420,13 +464,14 @@ chsh -s $(which fish)`,
         title: 'Bash scripts or commands fail with syntax errors when copied into terminal',
         symptoms: ['export VAR=val fails with unsupported command', 'source script.sh fails or does nothing', 'Error: && or || behaving unexpectedly in older fish versions'],
         cause: 'Fish syntax is deliberately not POSIX/Bash compatible (e.g., uses set -gx instead of export).',
-        solution: 'Use bass or run bash scripts explicitly with bash command.',
+        solution: 'Run bash scripts explicitly with bash command or use set -gx.',
         commands: [
           '# To run a bash script:',
           'bash ./script.sh',
           '# To set an environment variable in fish:',
           'set -gx MY_VAR "my value"'
         ],
+        verificationCommand: `echo $MY_VAR`,
         explanation: 'For bash scripts that modify environment variables, install the bass plugin or use conf.d scripts.'
       }
     ],
@@ -465,6 +510,12 @@ chsh -s $(which fish)`,
     name: 'Visual Studio Code',
     tagline: 'Microsoft flagship code editor with native Wayland OLED/HiDPI support.',
     category: 'Development',
+    whyChoose: [
+      'Native Wayland Ozone rendering flags',
+      'Unmatched extension marketplace & themes',
+      'Direct access to host utilities (fnm, uv, git)',
+      'Remote SSH workspace server capability'
+    ],
     overview: {
       whatIsIt: 'Visual Studio Code is the industry-standard code editor with built-in Git control, terminal integration, intelligent code completion, and a vast extension ecosystem.',
       whoIsItFor: 'Software engineers and web developers who need a robust graphical editor running crisply under native Wayland.',
@@ -481,15 +532,17 @@ sudo apt install -y ~/Downloads/code.deb
 rm ~/Downloads/code.deb
 # Launch with native Wayland flags:
 code --enable-features=UseOzonePlatform --ozone-platform=wayland`,
+        verificationCommand: `code --version`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~350 MB',
         whyThisMethod: {
           summary: 'Installing the official .deb package registers Microsoft apt repository automatically for seamless background updates.',
           points: [
-            'Avoids Snap sandboxing issues with external SDKs, formatters, and terminal shells.',
-            'Direct access to host utilities like fnm, uv, and system compilers.',
-            'Runs with Ozone Wayland flags for pixel-perfect font rendering on Wayland compositors.'
+            'Official Microsoft .deb release',
+            'Registers official apt repo for auto updates',
+            'Avoids Snap sandboxing issues with host compilers & shells',
+            'Runs with Wayland Ozone flags for pixel-perfect font rendering'
           ]
         },
         sourceUrl: 'https://code.visualstudio.com/Download'
@@ -504,10 +557,9 @@ code --enable-features=UseOzonePlatform --ozone-platform=wayland`,
         solution: 'Launch VS Code with password store set to basic or install gnome-keyring.',
         commands: [
           '# Launch flag to use file-based token storage:',
-          'code --password-store="basic"',
-          '# Or make persistent in ~/.config/Code/User/argv.json:',
-          '# {"password-store": "basic"}'
+          'code --password-store="basic"'
         ],
+        verificationCommand: `code --password-store="basic" --status`,
         explanation: 'Using basic password store avoids keyring daemon deadlocks on custom window managers like Niri or Sway.'
       }
     ],
@@ -558,6 +610,12 @@ code --enable-features=UseOzonePlatform --ozone-platform=wayland`,
     name: 'Fast Node Manager (fnm)',
     tagline: 'Blazing fast Node.js version manager built in Rust.',
     category: 'Development',
+    whyChoose: [
+      '40x faster startup than legacy bash nvm',
+      'Written in Rust for zero overhead',
+      'Automatic version switching (--use-on-cd)',
+      'Installs Node LTS immediately on setup'
+    ],
     overview: {
       whatIsIt: 'fnm (Fast Node Manager) is an ultra-fast Node.js version manager written in Rust. It allows you to switch between Node.js versions instantly based on `.nvmrc` or `.node-version` files in your project directory.',
       whoIsItFor: 'JavaScript/TypeScript developers who need multi-version Node environments without the slow shell startup penalty of legacy nvm.',
@@ -579,18 +637,19 @@ rm /tmp/fnm.zip
 mkdir -p ~/.config/fish/conf.d
 echo 'set -gx PATH ~/.local/share/fnm $PATH' > ~/.config/fish/conf.d/fnm.fish
 echo 'fnm env --use-on-cd --shell fish | source' >> ~/.config/fish/conf.d/fnm.fish
-# Source and install Node LTS:
 ~/.local/share/fnm/fnm install --lts
 ~/.local/share/fnm/fnm default lts-latest`,
+        verificationCommand: `fnm --version && node -v`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~10 MB (fnm binary) + ~120 MB (Node LTS)',
         whyThisMethod: {
-          summary: 'Direct zip installation places the standalone Rust binary cleanly into ~/.local/share/fnm and creates automatic directory-switching hooks for Fish shell.',
+          summary: 'Direct zip installation places standalone Rust binary cleanly into ~/.local/share/fnm and configures automatic directory-switching hooks for Fish shell.',
           points: [
-            '40x faster shell startup compared to traditional bash-based nvm.',
-            'Automatic version switching (--use-on-cd) when entering project folders.',
-            'Installs Node LTS immediately and sets it as system default.'
+            '40x faster shell startup compared to traditional bash nvm',
+            'Automatic directory version switching (--use-on-cd hook)',
+            'Installs Node LTS immediately and sets system default',
+            'Isolated binary in ~/.local/share/fnm without system pollution'
           ]
         },
         sourceUrl: 'https://github.com/Schniz/fnm'
@@ -604,11 +663,10 @@ echo 'fnm env --use-on-cd --shell fish | source' >> ~/.config/fish/conf.d/fnm.fi
         cause: 'The fnm environment script has not been sourced in your current shell session.',
         solution: 'Verify your shell configuration contains the fnm env evaluation hook.',
         commands: [
-          '# For Fish shell, verify ~/.config/fish/conf.d/fnm.fish exists and run:',
           'source ~/.config/fish/conf.d/fnm.fish',
-          '# Check active Node version:',
           'fnm current && node -v'
         ],
+        verificationCommand: `which node`,
         explanation: 'fnm works by dynamically prepending the active Node version directory to your system PATH variable.'
       }
     ],
@@ -658,6 +716,12 @@ echo 'fnm env --use-on-cd --shell fish | source' >> ~/.config/fish/conf.d/fnm.fi
     name: 'Python AI Stack (uv, PyTorch, Jupyter)',
     tagline: 'Next-generation Python environment for machine learning and data science.',
     category: 'Development',
+    whyChoose: [
+      '10-100x faster package installs via Astral uv',
+      'Bypasses Ubuntu PEP 668 externally managed errors',
+      'CPU-optimized PyTorch wheels save 3GB+ disk space',
+      'Instant JupyterLab kernel registration'
+    ],
     overview: {
       whatIsIt: 'A cutting-edge Python data science and AI environment powered by Astral uv (blazing fast package installer), isolated virtual environments, CPU-optimized PyTorch, and JupyterLab kernel registration.',
       whoIsItFor: 'AI engineers and data scientists building ML models, data analysis pipelines (Pandas/NumPy/Scikit-learn), or interactive Jupyter notebooks on Ubuntu.',
@@ -670,28 +734,26 @@ echo 'fnm env --use-on-cd --shell fish | source' >> ~/.config/fish/conf.d/fnm.fi
         id: 'uv-venv-setup',
         distro: 'Ubuntu',
         command: `sudo apt update && sudo apt install -y python3 python3-pip python3-venv curl wget
-# Install Astral uv tool:
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source ~/.config/fish/config.fish 2>/dev/null || true
 mkdir -p ~/nextgen
 python3 -m venv ~/nextgen/
-# Activate environment and install AI/Data packages:
 source ~/nextgen/bin/activate || ~/nextgen/bin/python3 -m pip install --upgrade pip
 ~/nextgen/bin/pip install numpy pandas matplotlib scipy scikit-learn
-# Install PyTorch (CPU optimized):
 ~/nextgen/bin/pip install --index-url https://download.pytorch.org/whl/cpu torch torchvision torchaudio
-# Install JupyterLab and register kernel:
 ~/nextgen/bin/pip install jupyterlab ipykernel ipython
 ~/nextgen/bin/python3 -m ipykernel install --user --name nextgen --display-name "Python (AI Base)"`,
+        verificationCommand: `~/nextgen/bin/python3 -c "import torch, pandas; print('PyTorch:', torch.__version__)"`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~1.8 GB (includes PyTorch CPU wheels & JupyterLab)',
         whyThisMethod: {
-          summary: 'Using an isolated virtual environment (nextgen) prevents Ubuntu PEP 668 "externally-managed-environment" errors while installing CPU-optimized PyTorch wheels.',
+          summary: 'Isolated virtual environment (nextgen) prevents Ubuntu PEP 668 managed errors while installing CPU-optimized PyTorch wheels.',
           points: [
-            'Installs Astral uv for 10-100x faster package dependency resolution.',
-            'Downloads lightweight PyTorch CPU wheels (avoiding 4GB+ Nvidia CUDA bloat on headless/CPU servers).',
-            'Registers the environment as a Jupyter Kernel so notebooks can immediately utilize the AI stack.'
+            'Astral uv fast package resolution',
+            'Avoids 4GB+ Nvidia CUDA bloat on headless CPU servers',
+            'Registers environment as a native Jupyter Kernel',
+            'Keeps system /usr/bin/python3 pristine'
           ]
         },
         sourceUrl: 'https://pytorch.org/get-started/locally/'
@@ -705,11 +767,11 @@ source ~/nextgen/bin/activate || ~/nextgen/bin/python3 -m pip install --upgrade 
         cause: 'Ubuntu 24.04 enforces PEP 668 to prevent pip from overwriting system packages managed by apt.',
         solution: 'Always install Python packages inside a virtual environment (venv) or use uv / pipx.',
         commands: [
-          '# Activate your AI environment before pip installing:',
           'source ~/nextgen/bin/activate',
           '# Or use uv to install tools globally in isolated shims:',
           'uv tool install <package-name>'
         ],
+        verificationCommand: `which pip`,
         explanation: 'Virtual environments keep system Python pristine while allowing complete freedom for AI dependencies.'
       }
     ],
@@ -749,6 +811,7 @@ source ~/nextgen/bin/activate || ~/nextgen/bin/python3 -m pip install --upgrade 
     category: 'Unsupported / Proprietary',
     isUnsupported: true,
     unsupportedMessage: 'Adobe Photoshop is not natively supported on Linux. Installing via WINE/Proton is unreliable and prone to breaking on updates. We strongly recommend using professional native Linux alternatives.',
+    whyChoose: ['Unsupported on Linux — see native open-source alternatives below'],
     overview: {
       whatIsIt: 'Adobe Photoshop is a proprietary photo editing and raster graphics design tool developed by Adobe.',
       whoIsItFor: 'Photographers and digital artists.',
@@ -762,13 +825,13 @@ source ~/nextgen/bin/activate || ~/nextgen/bin/python3 -m pip install --upgrade 
         id: 'wine-crashes',
         title: 'Photoshop Creative Cloud installer fails in WINE / Lutris',
         symptoms: ['Error code 182', 'Blank login screen in Creative Cloud', 'GPU acceleration disabled causing severe lag'],
-        cause: 'Adobe uses proprietary DRM and Windows-specific background background services that fail under Linux compatibility layers.',
+        cause: 'Adobe uses proprietary DRM and Windows-specific background services that fail under Linux compatibility layers.',
         solution: 'Switch to native Linux tools like GIMP, Krita, or use Photopea directly in your web browser.',
         commands: [
           'sudo apt install -y gimp krita',
-          '# Or open Photopea instantly:',
           'xdg-open https://www.photopea.com'
         ],
+        verificationCommand: `gimp --version`,
         explanation: 'Native Linux alternatives run at full hardware speed without licensing headaches or DRM crashes.'
       }
     ],
@@ -826,6 +889,12 @@ source ~/nextgen/bin/activate || ~/nextgen/bin/python3 -m pip install --upgrade 
     name: 'OnlyOffice Desktop Editors',
     tagline: 'Secure, high-compatibility office suite for text documents, spreadsheets, and presentations.',
     category: 'Productivity',
+    whyChoose: [
+      'Flawless Microsoft Word (.docx) & Excel (.xlsx) formatting',
+      'Clean unified Ribbon tab interface',
+      '100% open-source document foundation',
+      'Wayland native rendering compatibility'
+    ],
     overview: {
       whatIsIt: 'OnlyOffice is a powerful open-source office suite designed for maximum document formatting compatibility with Microsoft Office (.docx, .xlsx, .pptx).',
       whoIsItFor: 'Professionals and students who need to share Word, Excel, and PowerPoint files with colleagues without formatting distortions.',
@@ -841,15 +910,17 @@ source ~/nextgen/bin/activate || ~/nextgen/bin/python3 -m pip install --upgrade 
 curl -fsSL https://download.onlyoffice.com/GPG-KEY-ONLYOFFICE | sudo gpg --dearmor -o /usr/share/keyrings/onlyoffice.gpg
 echo "deb [signed-by=/usr/share/keyrings/onlyoffice.gpg] https://download.onlyoffice.com/repo/debian squeeze main" | sudo tee /etc/apt/sources.list.d/onlyoffice.list
 sudo apt update && sudo apt install -y onlyoffice-desktopeditors`,
+        verificationCommand: `onlyoffice-desktopeditors --version`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~480 MB',
         whyThisMethod: {
           summary: 'Registers the official OnlyOffice signed GPG key and apt repository for automatic background updates.',
           points: [
-            'Directly managed via Ubuntu standard apt update cycle.',
-            'Best font rendering and native desktop integration compared to Flatpak/Snap.',
-            'Supports native Wayland display protocols.'
+            'Official OnlyOffice signed repository',
+            'Automatic updates via apt upgrade',
+            'Best native font rendering & system integration',
+            'Supports native Wayland protocols'
           ]
         },
         sourceUrl: 'https://helpcenter.onlyoffice.com/installation/desktop-install-ubuntu.aspx'
@@ -858,14 +929,15 @@ sudo apt update && sudo apt install -y onlyoffice-desktopeditors`,
         id: 'flatpak-install',
         distro: 'Flatpak',
         command: `flatpak install -y flathub org.onlyoffice.desktopeditors`,
+        verificationCommand: `flatpak run org.onlyoffice.desktopeditors --version`,
         isRecommended: false,
         isOfficial: true,
         sizeEstimate: '~1.1 GB (with Flatpak runtime)',
         whyThisMethod: {
-          summary: 'Sandboxed installation that runs consistently across any Linux distribution without modifying system repositories.',
+          summary: 'Sandboxed container installation that runs consistently without modifying system repositories.',
           points: [
-            'Isolated container ensures zero dependency conflicts.',
-            'Easy permissions management via Flatseal.'
+            'Isolated container sandbox',
+            'Easy permission management via Flatseal'
           ]
         },
         sourceUrl: 'https://flathub.org/apps/org.onlyoffice.desktopeditors'
@@ -880,9 +952,9 @@ sudo apt update && sudo apt install -y onlyoffice-desktopeditors`,
         solution: 'Install xwayland or launch with Wayland native ozone flags.',
         commands: [
           'sudo apt install -y xwayland',
-          '# Or launch natively under Wayland:',
           'onlyoffice-desktopeditors --enable-features=UseOzonePlatform --ozone-platform=wayland'
         ],
+        verificationCommand: `onlyoffice-desktopeditors --version`,
         explanation: 'Enabling Ozone Wayland allows OnlyOffice to render directly without X11 translation layers.'
       }
     ],

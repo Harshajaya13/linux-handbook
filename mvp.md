@@ -1,459 +1,293 @@
-Bro, I actually wouldn't tell Gemini **"make it prettier."** That's how projects slowly become Dribbble shots instead of useful tools.
+I actually agree with you here.
 
-Instead, I'd give it a **design review** with clear reasoning. Something like this:
+The problem isn't the layout anymore.
 
----
+It's the emotional tone of the colors.
 
-# UI/UX Review v2
+Right now it feels like:
 
-The current UI is already very close to the vision.
+"Linux = Hacker = Neon Green = Cyber."
 
-Do **NOT** redesign it.
+That's a stereotype.
 
-Keep the same design language, colors, spacing philosophy and navigation.
+Your philosophy is different.
 
-The goal is **not** to make it prettier.
+Linux should feel calm, trustworthy, and handcrafted.
 
-The goal is to make it feel lighter, faster and more action-oriented.
+That's much closer to how Hermes feels.
 
-Everything below should be treated as refinement, not redesign.
+I'd send Gemini this:
 
----
+Color System Redesign
 
-# 1. Search must become the hero.
+The current UI is functionally correct, but the color palette still feels like a generic AI-generated Linux dashboard.
 
-Currently the logo and heading compete with the search bar.
+It relies heavily on neon greens, saturated blues, bright purples, and high-contrast accent colors.
 
-The search bar is the product.
+This creates a "cyberpunk", "hacker", or "terminal" feeling.
 
-Increase the visual importance of search.
+That is not the emotional direction of this product.
 
-Reduce the visual weight of everything around it.
+Emotional Direction
 
-A user should immediately understand
+Linux is often presented as something intimidating.
 
-> "Search something."
+I want this product to make Linux feel approachable.
 
-within one second.
+The UI should feel like
 
----
+calm
+warm
+trustworthy
+handcrafted
+thoughtful
+quiet
 
-# 2. Install should become the default experience.
+Imagine sitting at a wooden desk with a cup of coffee while configuring your system.
 
-When a user searches for software,
+Not inside a science-fiction hacking movie.
 
-they almost always already know what they want.
+Remove the "vibe-coded" palette
 
-Example
+Avoid
 
-Niri
+neon green
+electric blue
+bright purple
+glowing cyan
+high saturation accents
 
-OnlyOffice
+These immediately make the UI feel AI-generated.
 
-Docker
+New Color Philosophy
 
-Zen Browser
-
-The first thing users want is NOT
-
-"What is Niri?"
-
-The first thing they want is
-
-"How do I install it?"
-
-Therefore,
-
-the default tab should become
-
-Install
-
-instead of
-
-Overview.
-
-Overview becomes secondary documentation.
-
----
-
-# 3. Reduce documentation feeling.
-
-Currently the pages feel slightly like documentation.
-
-The product should instead feel like a guided playbook.
-
-Every page should answer
-
-"What should I do next?"
-
-instead of
-
-"Here is information."
-
----
-
-# 4. Turn pages into workflows.
-
-Instead of presenting information,
-
-guide the user.
-
-Example
-
-Install
-
-↓
-
-Verify installation
-
-↓
-
-Configure
-
-↓
-
-Common issues
-
-↓
-
-Done
-
-The user should feel progress.
-
----
-
-# 5. Give important sections stronger hierarchy.
-
-Currently almost every card has similar visual weight.
-
-Not everything is equally important.
-
-Example
-
-Install
-
-should immediately attract attention.
-
-Problems
-
-should be visually secondary.
-
-Files
-
-even lower.
-
-Notes
-
-lowest.
-
-Hierarchy should be obvious without reading.
-
----
-
-# 6. Replace passive sections with practical ones.
-
-Current
-
-Who is it for?
-
-Replace with
-
-Why choose this software?
-
-Example
-
-Niri
-
-✓ Infinite scrolling workspace
-
-✓ Wayland native
-
-✓ Keyboard driven
-
-✓ Lightweight
-
-This helps users decide quickly.
-
----
-
-# 7. Add reasoning to every installation method.
-
-Never show commands alone.
-
-Always explain why this method is recommended.
-
-Example
-
-Ubuntu
-
-Recommended
-
-Reason
-
-Official repository
-
-Automatic updates
-
-Tested
-
-Most stable
-
-Then show
-
-sudo apt install ...
-
-This reduces uncertainty.
-
----
-
-# 8. Problems should become solution cards.
-
-Current
-
-Problem
-
-↓
-
-Description
-
-Instead
-
-Problem
-
-↓
-
-Cause
-
-↓
-
-Solution
-
-↓
-
-Command
-
-↓
-
-Verification
-
-↓
-
-Related issues
-
-Every problem should feel immediately solvable.
-
----
-
-# 9. Reduce visual heaviness.
-
-The UI is beautiful,
-
-but slightly heavy.
-
-Possible reasons
-
-Every card has similar borders.
-
-Every section has similar contrast.
-
-Large boxed layouts everywhere.
-
-Too many rectangles competing equally.
-
-Do NOT redesign.
-
-Simply improve rhythm.
-
-Introduce more breathing room.
-
-Reduce unnecessary borders.
-
-Let the page feel lighter.
-
----
-
-# 10. Empty space should have purpose.
-
-Some pages contain large unused vertical areas.
-
-Instead,
-
-allow sections to flow naturally.
-
-Install
-
-↓
-
-Problems
-
-↓
-
-Alternatives
-
-↓
-
-Files
-
-↓
-
-Remove
-
-↓
-
-Notes
-
-The page should feel complete.
-
----
-
-# 11. Use color intentionally.
-
-Current palette is excellent.
-
-Keep
+The interface should use mostly neutral colors.
 
 Black
 
-Gray
+Dark charcoal
 
-Green
+Soft gray
 
-Do not introduce more colors.
+Warm white
 
-Instead,
+Only small accents should use color.
 
-use green only for success and recommended actions.
-
-Amber only for warnings.
-
-Red only for removal or destructive actions.
-
-Color should communicate meaning,
+Color should communicate state,
 
 not decoration.
 
----
+Green
 
-# 12. Every page should answer one journey.
+Current green is too saturated.
 
-Imagine the user saying
+Replace it with a softer, muted green.
 
-"I need OnlyOffice."
+Think
 
-The page should naturally guide them.
-
-Install
-
-↓
-
-Verify
-
-↓
-
-Configure
-
-↓
-
-Fix common issues
-
-↓
-
-Alternative if needed
-
-↓
-
-Remove
-
-Nothing else.
-
----
-
-# 13. Make every page feel alive.
-
-Documentation feels static.
-
-This product should feel interactive.
-
-Commands should always be copyable.
-
-Verification steps should exist.
-
-Quick actions should exist.
-
-Users should feel they are completing tasks,
-
-not reading articles.
-
----
-
-# 14. Remove unnecessary cognitive load.
-
-If something does not help the user install,
-
-fix,
-
-configure,
-
-or remove software,
-
-question why it exists.
-
-Minimalism is not removing features.
-
-Minimalism is removing decisions.
-
----
-
-# 15. Keep the existing identity.
-
-The current aesthetic is already strong.
-
-Do NOT chase modern UI trends.
-
-Do NOT make it look like another Linux package directory.
-
-Do NOT add gradients.
-
-Do NOT add glassmorphism.
-
-Do NOT add excessive animations.
-
-Keep it feeling like
-
-A premium technical handbook.
+moss
+sage
+eucalyptus
+forest after rain
 
 Not
 
-A marketing website.
+RGB terminal green
+Matrix
+hacker aesthetic
 
----
+Green should feel reassuring.
 
-# Final Design Principle
+Not loud.
 
-Every design decision should satisfy one question:
+Blue
 
-> **Can a user go from "I need this software" to "It's working" in under 30 seconds without leaving this page?**
+The current blue feels synthetic.
 
-If the answer is yes,
+Use a muted slate blue.
 
-the interface is moving in the right direction.
+Think
 
----
+GitHub
+Linear
+Obsidian
 
-Bro, one last thing that I think is the **real missing piece**, and it's why your heart feels "heavy."
+Avoid bright electric blues.
 
-Your UI is currently **information-first**.
+Purple
 
-Your vision is **action-first**.
+Remove purple almost entirely.
 
-That tiny difference changes everything.
+It adds unnecessary visual noise.
 
-Right now the page says:
+If needed,
 
-> "Here is Niri."
+replace it with muted gray-blue or soft indigo.
 
-What it should feel like is:
+Red
 
-> **"Let's get Niri running."**
+Use a muted brick or rust red.
 
-That's not a color change or a spacing tweak. It's a shift in philosophy. Once every component is built around helping the user take the **next action**, the UI will stop feeling heavy and start feeling effortless. I genuinely think that's the last 10% that turns this from a nice website into a product people remember.
+Never bright red.
+
+Only for destructive actions.
+
+Yellow
+
+Use warm amber.
+
+Never bright yellow.
+
+Reserve for warnings only.
+
+Borders
+
+Current borders are too visible.
+
+Reduce border contrast.
+
+Allow spacing to separate components instead.
+
+The interface should feel lighter.
+
+Terminal Commands
+
+Stop using bright green for command text.
+
+Instead,
+
+introduce proper syntax highlighting.
+
+Example
+
+Prompt ($)
+
+Soft muted green
+
+Commands
+
+Warm white
+
+Flags
+
+Soft amber
+
+Paths
+
+Muted blue
+
+URLs
+
+Muted cyan
+
+Comments
+
+Gray
+
+The terminal should feel comfortable to read for long sessions.
+
+Cards
+
+Cards should almost disappear into the background.
+
+No glowing borders.
+
+No colorful outlines.
+
+No unnecessary emphasis.
+
+Content should become the focus.
+
+Buttons
+
+Primary buttons
+
+Muted green
+
+Secondary buttons
+
+Gray
+
+Destructive
+
+Muted red
+
+Never use highly saturated buttons.
+
+Badges
+
+Badges currently attract too much attention.
+
+Reduce saturation.
+
+Use softer backgrounds.
+
+Example
+
+Recommended
+
+Muted sage
+
+Verified
+
+Slate blue
+
+Official
+
+Neutral gray
+
+Experimental
+
+Warm amber
+
+Deprecated
+
+Muted rust
+
+Overall Feeling
+
+The UI should feel like
+
+Hermes
+
+Zen Browser
+
+Linear
+
+GitHub
+
+Obsidian
+
+Minimal macOS system apps
+
+Not
+
+Kali Linux
+
+HackTheBox
+
+Cyberpunk dashboards
+
+Gaming RGB themes
+
+Final Rule
+
+When someone opens this website,
+
+they should think
+
+"Linux feels approachable."
+
+not
+
+"This looks like a hacker dashboard."
+
+Every color choice should reduce anxiety, improve readability, and help users focus on solving their problem rather than being distracted by the interface.
+
+I think you've landed on something important that goes beyond colors.
+
+Hermes has a resting UI. You can leave it open for hours and it doesn't fight for your attention.
+
+This Linux Handbook should have the same quality. Someone might keep an installation guide open on a second monitor for an hour while setting up their machine. During that time, the interface shouldn't feel like it's shouting. It should quietly stay out of the way while the commands and instructions do the work.
+
+That's a much rarer design goal than "make it look modern," and it fits the philosophy you've been describing.

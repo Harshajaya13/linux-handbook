@@ -3,7 +3,7 @@
 import React from 'react';
 import { BookOpen, Terminal, Wrench, RefreshCw, FolderTree, Trash2, MessageSquare } from 'lucide-react';
 
-export type TabType = 'overview' | 'install' | 'problems' | 'alternatives' | 'files' | 'remove' | 'notes';
+export type TabType = 'install' | 'overview' | 'problems' | 'alternatives' | 'files' | 'remove' | 'notes';
 
 interface PlaybookTabsProps {
   activeTab: TabType;
@@ -16,9 +16,10 @@ interface PlaybookTabsProps {
 }
 
 export default function PlaybookTabs({ activeTab, onSelectTab, counts = {} }: PlaybookTabsProps) {
+  // Ordered by Action-First priority: Install is #1 default!
   const tabs: { id: TabType; label: string; icon: React.ReactNode; count?: number }[] = [
-    { id: 'overview', label: 'Overview', icon: <BookOpen className="w-4 h-4" /> },
     { id: 'install', label: 'Install', icon: <Terminal className="w-4 h-4" /> },
+    { id: 'overview', label: 'Overview', icon: <BookOpen className="w-4 h-4" /> },
     { id: 'problems', label: 'Problems', icon: <Wrench className="w-4 h-4" />, count: counts.problems },
     { id: 'alternatives', label: 'Alternatives', icon: <RefreshCw className="w-4 h-4" />, count: counts.alternatives },
     { id: 'files', label: 'Files & Config', icon: <FolderTree className="w-4 h-4" /> },
@@ -27,7 +28,7 @@ export default function PlaybookTabs({ activeTab, onSelectTab, counts = {} }: Pl
   ];
 
   return (
-    <div className="border-b border-zinc-800/80 bg-zinc-950/40 sticky top-14 z-30 backdrop-blur-md overflow-x-auto no-scrollbar">
+    <div className="border-b border-zinc-900 bg-zinc-950/90 sticky top-14 z-30 backdrop-blur-md overflow-x-auto no-scrollbar">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center gap-1 min-w-max">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
@@ -36,9 +37,9 @@ export default function PlaybookTabs({ activeTab, onSelectTab, counts = {} }: Pl
               key={tab.id}
               onClick={() => onSelectTab(tab.id)}
               type="button"
-              className={`flex items-center gap-2 px-3.5 py-3 text-sm font-medium border-b-2 transition-all cursor-pointer select-none ${
+              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all cursor-pointer select-none ${
                 isActive
-                  ? 'border-emerald-400 text-white bg-zinc-900/60'
+                  ? 'border-emerald-400 text-white bg-zinc-900/80 font-bold'
                   : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/30'
               }`}
             >
