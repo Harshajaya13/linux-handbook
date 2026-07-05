@@ -150,7 +150,7 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
       completeCleanup: { title: 'Full System Cleanup', command: 'sudo rm -f /usr/local/bin/niri && rm -rf ~/.config/niri ~/.cache/niri ~/niri', description: 'Removes binary, source repository, and all user configs.' }
     },
     communityNotes: [
-      { id: '1', author: 'harsha', date: '2026-07-05', content: 'On Ubuntu 24.04 Server headless, make sure to install libseat-dev and libdisplay-info-dev before running cargo build --release otherwise meson fails!', upvotes: 24 }
+      { id: '1', author: 'contributor', date: '2026-07-05', content: 'On Ubuntu 24.04 Server headless, make sure to install libseat-dev and libdisplay-info-dev before running cargo build --release otherwise meson fails!', upvotes: 24 }
     ],
     popularRank: 1
   },
@@ -246,7 +246,7 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
       completeCleanup: { title: 'Complete Purge', command: 'rm -f ~/.local/bin/zen && rm -rf ~/.tarball-installations/zen ~/.zen ~/.cache/zen', description: 'Removes all traces of Zen Browser from the system.' }
     },
     communityNotes: [
-      { id: '2', author: 'harsha', date: '2026-07-05', content: 'Works beautifully on Niri tiling window manager without any graphical artifacts!', upvotes: 18 }
+      { id: '2', author: 'contributor', date: '2026-07-05', content: 'Works beautifully on Niri tiling window manager without any graphical artifacts!', upvotes: 18 }
     ],
     popularRank: 2
   },
@@ -362,7 +362,7 @@ cargo install tree-sitter-cli`,
       completeCleanup: { title: 'Complete Purge', command: 'sudo rm -rf /opt/nvim* /usr/local/bin/nvim && rm -rf ~/.config/nvim ~/.local/share/nvim ~/.local/state/nvim ~/.cache/nvim', description: 'Completely wipes Neovim from system.' }
     },
     communityNotes: [
-      { id: '3', author: 'harsha', date: '2026-07-05', content: 'If you want to restore your old configuration, check ~/.config/nvim.bak created during installation!', upvotes: 31 }
+      { id: '3', author: 'contributor', date: '2026-07-05', content: 'If you want to restore your old configuration, check ~/.config/nvim.bak created during installation!', upvotes: 31 }
     ],
     popularRank: 3
   },
@@ -448,7 +448,7 @@ systemctl --user enable --now wireplumber.service`,
       completeCleanup: { title: 'Full Audio Wipout', command: 'systemctl --user disable --now pipewire.socket pipewire-pulse.socket wireplumber.service && sudo apt remove --purge -y pipewire* wireplumber* && rm -rf ~/.config/pipewire ~/.config/wireplumber', description: 'Disables services, removes packages, and deletes custom user audio profiles.' }
     },
     communityNotes: [
-      { id: '4', author: 'harsha', date: '2026-07-05', content: 'Always check that unattended-upgrades is disabled so audio services do not get restarted mid-session!', upvotes: 12 }
+      { id: '4', author: 'contributor', date: '2026-07-05', content: 'Always check that unattended-upgrades is disabled so audio services do not get restarted mid-session!', upvotes: 12 }
     ],
     popularRank: 4
   },
@@ -537,7 +537,7 @@ chsh -s $(which fish)`,
       completeCleanup: { title: 'Full Shell Restoration', command: 'chsh -s /bin/bash && sudo apt remove --purge -y fish zoxide && rm -rf ~/.config/fish ~/.local/share/zoxide ~/.cache/fish', description: 'Restores bash as default and purges all fish/zoxide files.' }
     },
     communityNotes: [
-      { id: '5', author: 'harsha', date: '2026-07-05', content: 'Type `z <keyword>` to jump to any previously visited folder instantly without typing the full path!', upvotes: 29 }
+      { id: '5', author: 'contributor', date: '2026-07-05', content: 'Type `z <keyword>` to jump to any previously visited folder instantly without typing the full path!', upvotes: 29 }
     ],
     popularRank: 5
   },
@@ -637,7 +637,7 @@ code --enable-features=UseOzonePlatform --ozone-platform=wayland`,
       completeCleanup: { title: 'Full Purge', command: 'sudo apt remove --purge -y code && rm -rf ~/.config/Code ~/.vscode ~/.cache/vscode-cpptools', description: 'Removes application, repository keys, and all user data folders.' }
     },
     communityNotes: [
-      { id: '6', author: 'harsha', date: '2026-07-05', content: 'For permanent Wayland support without typing flags every time, add `--enable-features=UseOzonePlatform --ozone-platform=wayland` into ~/.config/code-flags.conf!', upvotes: 45 }
+      { id: '6', author: 'contributor', date: '2026-07-05', content: 'For permanent Wayland support without typing flags every time, add `--enable-features=UseOzonePlatform --ozone-platform=wayland` into ~/.config/code-flags.conf!', upvotes: 45 }
     ],
     popularRank: 6
   },
@@ -743,7 +743,7 @@ echo 'fnm env --use-on-cd --shell fish | source' >> ~/.config/fish/conf.d/fnm.fi
       completeCleanup: { title: 'Full Node Cleanup', command: 'rm -rf ~/.local/share/fnm ~/.cache/fnm ~/.config/fish/conf.d/fnm.fish ~/.npm ~/.cache/npm', description: 'Wipes fnm, Node versions, npm cache, and shell configs.' }
     },
     communityNotes: [
-      { id: '7', author: 'harsha', date: '2026-07-05', content: 'Using `--use-on-cd` with fish shell makes switching between old Node 18 and Node 22 projects completely seamless!', upvotes: 21 }
+      { id: '7', author: 'contributor', date: '2026-07-05', content: 'Using `--use-on-cd` with fish shell makes switching between old Node 18 and Node 22 projects completely seamless!', upvotes: 21 }
     ],
     popularRank: 7
   },
@@ -836,7 +836,7 @@ source ~/nextgen/bin/activate || ~/nextgen/bin/python3 -m pip install --upgrade 
       completeCleanup: { title: 'Full AI Environment Wipe', command: 'rm -rf ~/nextgen ~/.local/share/jupyter/kernels/nextgen ~/.local/bin/uv ~/.cache/uv ~/.cache/pip', description: 'Deletes environment, uv tool, kernel specs, and download caches.' }
     },
     communityNotes: [
-      { id: '8', author: 'harsha', date: '2026-07-05', content: 'Using `--index-url https://download.pytorch.org/whl/cpu` saves over 3GB of disk space if you do not have an Nvidia GPU!', upvotes: 38 }
+      { id: '8', author: 'contributor', date: '2026-07-05', content: 'Using `--index-url https://download.pytorch.org/whl/cpu` saves over 3GB of disk space if you do not have an Nvidia GPU!', upvotes: 38 }
     ],
     popularRank: 8
   },
@@ -916,7 +916,7 @@ source ~/nextgen/bin/activate || ~/nextgen/bin/python3 -m pip install --upgrade 
       completeCleanup: { title: 'Purge WINE', command: 'rm -rf ~/.wine', description: 'Deletes entire default Windows emulation prefix.' }
     },
     communityNotes: [
-      { id: '9', author: 'harsha', date: '2026-07-05', content: 'Photopea is honestly a lifesaver when someone sends you a complex PSD file with text layers!', upvotes: 52 }
+      { id: '9', author: 'contributor', date: '2026-07-05', content: 'Photopea is honestly a lifesaver when someone sends you a complex PSD file with text layers!', upvotes: 52 }
     ],
     popularRank: 9
   },
@@ -1032,7 +1032,7 @@ sudo apt update && sudo apt install -y onlyoffice-desktopeditors`,
       completeCleanup: { title: 'Full System Purge', command: 'sudo apt remove --purge -y onlyoffice-desktopeditors && sudo rm -f /etc/apt/sources.list.d/onlyoffice.list /usr/share/keyrings/onlyoffice.gpg && rm -rf ~/.config/onlyoffice ~/.cache/onlyoffice', description: 'Deletes app, repository sources, GPG keys, and user settings.' }
     },
     communityNotes: [
-      { id: '10', author: 'harsha', date: '2026-07-05', content: 'OnlyOffice handles Microsoft Excel complex formulas and pivot tables much better than LibreOffice Calc!', upvotes: 41 }
+      { id: '10', author: 'contributor', date: '2026-07-05', content: 'OnlyOffice handles Microsoft Excel complex formulas and pivot tables much better than LibreOffice Calc!', upvotes: 41 }
     ],
     popularRank: 10
   }

@@ -1,19 +1,18 @@
 # Linux Handbook
 
-> "I didn't reset Ubuntu because Linux was hard.  
-> I reset Ubuntu because I forgot what I had already figured out."
+> **"This repository is not a collection of software. It is a collection of solved problems."**
 
 ---
 
 ## Why This Exists
 
-This project was born from frustration. 
+This project was born from a familiar frustration. 
 
-Like many Linux users, I would install an application, spend hours making it work, finally solve the problem... and a few months later, reinstall my system. Then everything started again.
+Like many Linux users, you install an application, spend hours making it work, finally solve the problem... and a few months later, reinstall your system. Then everything starts over.
 
-I'd spend a Saturday getting a Wayland app working, forget which env var fixed it, and be back to square one after the next reinstall. Those answers were never in one place—some were on GitHub, some inside Reddit threads, some on StackOverflow, and others buried deep in my terminal history.
+You spend a Saturday getting a Wayland app working, forget which environment variable fixed it, and are back to square one after the next reinstall. Those answers were never in one place—some were on GitHub, some inside Reddit threads, some on StackOverflow, and others buried deep in terminal history.
 
-**This repository is not a collection of software. It is a collection of solved problems.** We don't scrape package indexes or use AI generators; we document the journey: what broke, why it broke, and the exact command that fixed it.
+We don't scrape package indexes or use AI generators; we document the journey: what broke, why it broke, and the exact command that fixed it.
 
 ---
 
@@ -55,8 +54,8 @@ People visit playbooks to take action. Documentation supports commands; commands
 Every problem card must address:
 - What happened?
 - Why did it happen?
-- How do I fix it?
-- How do I verify that it is fixed?
+- How to fix it?
+- How to verify that it is fixed?
 
 ### 4. Never Make the User Leave the Page
 If installing or configuring an application requires opening multiple GitHub issues, Reddit posts, or blog articles, the playbook has failed.
@@ -80,4 +79,4 @@ Before publishing a guide, ask yourself:
 
 If the answer is yes, it's ready.
 
-If you're the only one still working on this in six months, that's fine. One good playbook still helps someone.
+One good playbook always helps someone.
