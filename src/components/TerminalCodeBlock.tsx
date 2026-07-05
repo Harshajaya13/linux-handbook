@@ -18,7 +18,7 @@ const COMMANDS_SET = new Set([
   'disable', 'clone', 'which', 'grep', 'pactl', 'xdg-open', 'bash', 'sh', 'fish',
   'zoxide', 'niri', 'zen', 'nvim', 'code', 'fnm', 'venv', 'activate', 'ipykernel',
   'jupyter', 'jupyterlab', 'gimp', 'krita', 'onlyoffice-desktopeditors', 'xwayland-satellite',
-  'tee', 'gpg', 'unzip', 'cat', 'less', 'head', 'tail', 'find', 'sed', 'awk'
+  'tee', 'gpg', 'unzip', 'cat', 'less', 'head', 'tail', 'find', 'sed', 'awk', 'pacman', 'dnf', 'yay'
 ]);
 
 export default function TerminalCodeBlock({
@@ -30,12 +30,11 @@ export default function TerminalCodeBlock({
   const lines = code.trim().split('\n');
 
   const highlightToken = (token: string, idx: number) => {
-    // If empty or whitespace
     if (!token || /^\s+$/.test(token)) {
       return <span key={idx}>{token}</span>;
     }
 
-    // Flag (starts with - or --)
+    // Flag
     if (token.startsWith('-') && token.length > 1) {
       return (
         <span key={idx} className="text-amber-300/90 font-mono">
@@ -70,10 +69,9 @@ export default function TerminalCodeBlock({
       );
     }
 
-    // Clean punctuation from word for lookup
     const cleanWord = token.replace(/^["'(]/, '').replace(/["'),;]+$/, '');
 
-    // Known Command or Keyword
+    // Known Command
     if (COMMANDS_SET.has(cleanWord.toLowerCase())) {
       return (
         <span key={idx} className="text-zinc-100 font-semibold font-mono">
@@ -82,7 +80,6 @@ export default function TerminalCodeBlock({
       );
     }
 
-    // Package names, arguments, variables, default
     return (
       <span key={idx} className="text-cyan-300/90 font-mono">
         {token}
@@ -96,8 +93,7 @@ export default function TerminalCodeBlock({
   };
 
   return (
-    <div className="rounded-xl bg-zinc-950/95 border border-zinc-800/80 p-4 sm:p-5 font-mono relative group shadow-inner transition-all hover:border-zinc-700/80">
-      {/* Sleek top-right Copy button without any loud header row */}
+    <div className="rounded-xl bg-[#090a0f] border border-zinc-800/90 p-4 sm:p-5 font-mono relative group shadow-inner transition-all hover:border-zinc-700">
       <div className="absolute top-3.5 right-3.5 z-10 opacity-70 group-hover:opacity-100 transition-opacity">
         <CopyButton text={code} label={label} size="sm" />
       </div>
@@ -106,32 +102,29 @@ export default function TerminalCodeBlock({
         {lines.map((line, lineIdx) => {
           const trimmed = line.trim();
 
-          // Empty line
           if (!trimmed) {
             return <div key={lineIdx} className="h-3" />;
           }
 
-          // Comment line
           if (trimmed.startsWith('#')) {
             return (
               <div key={lineIdx} className="flex items-start">
                 {showPrompt && (
                   <span className="text-zinc-600 select-none mr-3 shrink-0">#</span>
                 )}
-                <span className="text-zinc-500 italic">
+                <span className="text-zinc-500 italic font-mono">
                   {trimmed.replace(/^#\s*/, '')}
                 </span>
               </div>
             );
           }
 
-          // Command line
           return (
             <div key={lineIdx} className="flex items-start">
               {showPrompt && (
-                <span className="text-emerald-500/70 select-none mr-3 shrink-0 font-bold">$</span>
+                <span className="text-zinc-500 select-none mr-3 shrink-0 font-mono">$</span>
               )}
-              <div className="whitespace-pre flex-1 min-w-0">
+              <div className="whitespace-pre flex-1 min-w-0 font-mono">
                 {highlightLine(line)}
               </div>
             </div>

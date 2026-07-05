@@ -2,14 +2,28 @@
 
 @layer base {
   :root {
-    --background: #090a0f;
-    --foreground: #ededed;
+    --background: #0d0e12;
+    --foreground: #e4e4e7;
+    --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+    --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --font-display: var(--font-space), var(--font-inter), system-ui, sans-serif;
   }
 
   body {
-    background-color: #090a0f;
-    color: #ededed;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+  }
+
+  /* Headings use humanist/display sans with clean letter spacing */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  /* Monospace is strictly reserved for code, paths, flags, and terminal output */
+  pre, code, kbd, samp, .font-mono {
+    font-family: var(--font-mono);
   }
 
   /* Sleek dark scrollbars */
@@ -19,7 +33,7 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #090a0f;
+    background: #0d0e12;
   }
 
   ::-webkit-scrollbar-thumb {

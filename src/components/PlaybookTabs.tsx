@@ -16,7 +16,6 @@ interface PlaybookTabsProps {
 }
 
 export default function PlaybookTabs({ activeTab, onSelectTab, counts = {} }: PlaybookTabsProps) {
-  // Ordered by Action-First priority: Install is #1 default!
   const tabs: { id: TabType; label: string; icon: React.ReactNode; count?: number }[] = [
     { id: 'install', label: 'Install', icon: <Terminal className="w-4 h-4" /> },
     { id: 'overview', label: 'Overview', icon: <BookOpen className="w-4 h-4" /> },
@@ -28,8 +27,8 @@ export default function PlaybookTabs({ activeTab, onSelectTab, counts = {} }: Pl
   ];
 
   return (
-    <div className="border-b border-zinc-900 bg-zinc-950/90 sticky top-14 z-30 backdrop-blur-md overflow-x-auto no-scrollbar">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center gap-1 min-w-max">
+    <div className="border-b border-zinc-900 bg-[#0d0e12]/90 sticky top-14 z-30 backdrop-blur-md overflow-x-auto no-scrollbar font-sans">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 flex items-center gap-6 min-w-max">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -37,18 +36,18 @@ export default function PlaybookTabs({ activeTab, onSelectTab, counts = {} }: Pl
               key={tab.id}
               onClick={() => onSelectTab(tab.id)}
               type="button"
-              className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-all cursor-pointer select-none ${
+              className={`flex items-center gap-2 py-3.5 text-sm transition-all cursor-pointer select-none border-b-2 -mb-px ${
                 isActive
-                  ? 'border-emerald-400 text-white bg-zinc-900/80 font-bold'
-                  : 'border-transparent text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/30'
+                  ? 'border-white text-white font-medium'
+                  : 'border-transparent text-zinc-500 hover:text-zinc-300'
               }`}
             >
-              <span className={isActive ? 'text-emerald-400' : 'text-zinc-500'}>{tab.icon}</span>
+              <span className={isActive ? 'text-zinc-200' : 'text-zinc-500'}>{tab.icon}</span>
               <span>{tab.label}</span>
               {tab.count !== undefined && tab.count > 0 && (
                 <span
-                  className={`px-1.5 py-0.2 rounded-full text-[11px] font-mono ${
-                    isActive ? 'bg-emerald-500/20 text-emerald-300' : 'bg-zinc-800 text-zinc-400'
+                  className={`px-1.5 py-0.5 rounded-full text-[11px] font-sans ${
+                    isActive ? 'bg-zinc-800 text-zinc-200' : 'bg-zinc-900/80 text-zinc-500'
                   }`}
                 >
                   {tab.count}

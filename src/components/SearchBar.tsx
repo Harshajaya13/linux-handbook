@@ -89,7 +89,7 @@ export default function SearchBar({
   const getIcon = (type: string) => {
     switch (type) {
       case 'playbook':
-        return <Terminal className="w-4 h-4 text-emerald-400" />;
+        return <Terminal className="w-4 h-4 text-emerald-500/80" />;
       case 'problem':
         return <Wrench className="w-4 h-4 text-amber-400" />;
       case 'alternative':
@@ -101,30 +101,134 @@ export default function SearchBar({
 
   if (variant === 'modal' && !isOpen) return null;
 
+  if (variant === 'hero') {
+    // Move #4: Let the terminal be the visual identity, not a decorative afterthought or SaaS command palette.
+    return (
+      <div className="w-full max-w-3xl mx-auto relative font-mono">
+        <div className="w-full bg-zinc-950/95 border border-zinc-800/80 hover:border-zinc-700/80 rounded-xl shadow-2xl transition-all duration-200 overflow-hidden p-1 sm:p-2">
+          {/* Authentic terminal prompt layout */}
+          <div className="flex items-center px-3 sm:px-4 py-3 bg-zinc-900/40 rounded-lg">
+            <span className="text-emerald-500/80 select-none font-bold mr-3 shrink-0">$</span>
+            <span className="text-zinc-500 select-none mr-2.5 hidden sm:inline font-semibold">linux-handbook search</span>
+            <div className="relative flex-1 flex items-center min-w-0">
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleInputKeyDown}
+                placeholder="software, commands, error messages, or fixes... (e.g. niri, wayland, audio)"
+                className="w-full bg-transparent text-white placeholder-zinc-600 font-mono text-sm sm:text-base focus:outline-none pr-8"
+              />
+              {!query && (
+                <span className="inline-block w-2 h-4 bg-zinc-500/60 animate-pulse pointer-events-none -ml-6 sm:-ml-2" />
+              )}
+            </div>
+            {query ? (
+              <button
+                onClick={() => setQuery('')}
+                type="button"
+                className="p-1 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            ) : (
+              <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-500 text-xs select-none shrink-0">
+                <Command className="w-3 h-3" />
+                <span>K</span>
+              </div>
+            )}
+          </div>
+
+          {/* Results Dropdown */}
+          {results.length > 0 && (
+            <div className="max-h-[50vh] overflow-y-auto divide-y divide-zinc-800/60 mt-1 p-1 bg-zinc-950">
+              {results.map((item, idx) => {
+                const isSelected = idx === selectedIndex;
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => handleSelect(item)}
+                    onMouseEnter={() => setSelectedIndex(idx)}
+                    className={`group flex items-center justify-between p-3 rounded-lg transition-all cursor-pointer ${
+                      isSelected ? 'bg-zinc-800/90 text-white' : 'hover:bg-zinc-900/80 text-zinc-300'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3.5 min-w-0 pr-3">
+                      <div className="p-2 rounded-md bg-zinc-900 border border-zinc-800 shrink-0 mt-0.5">
+                        {getIcon(item.type)}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-sm sm:text-base text-white truncate font-sans">
+                            {item.title}
+                          </span>
+                          {item.badge && (
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-zinc-400 truncate mt-0.5 font-sans">
+                          {item.subtitle}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {item.commandSnippet && (
+                        <div className="hidden lg:block">
+                          <CopyButton
+                            text={item.commandSnippet}
+                            label="Copy CMD"
+                            size="sm"
+                          />
+                        </div>
+                      )}
+                      <ArrowRight
+                        className={`w-4 h-4 transition-transform ${
+                          isSelected ? 'text-white translate-x-0.5' : 'text-zinc-600 group-hover:text-zinc-400'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Empty state */}
+          {query && results.length === 0 && (
+            <div className="p-8 text-center text-zinc-500 font-sans">
+              <p className="text-sm font-medium text-zinc-400">No playbooks or fixes found for &ldquo;{query}&rdquo;</p>
+              <p className="text-xs mt-1 text-zinc-600">Try searching for an error message (like &ldquo;display&rdquo; or &ldquo;lock&rdquo;) or a tool (like &ldquo;niri&rdquo; or &ldquo;pipewire&rdquo;).</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Modal variant (quiet, considered, without SaaS shortcut fluff bars)
   const containerClasses =
-    variant === 'modal'
-      ? 'fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center pt-[15vh] p-4 animate-in fade-in duration-150'
-      : 'w-full max-w-3xl mx-auto relative';
+    'fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start justify-center pt-[15vh] p-4 animate-in fade-in duration-150 font-sans';
 
   const boxClasses =
-    variant === 'modal'
-      ? 'w-full max-w-2xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden'
-      : 'w-full bg-zinc-900/90 hover:bg-zinc-900 border border-zinc-700/80 hover:border-zinc-600 rounded-2xl shadow-2xl transition-all duration-200 overflow-hidden';
+    'w-full max-w-2xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden font-mono';
 
   return (
-    <div className={containerClasses} onClick={variant === 'modal' ? onClose : undefined}>
+    <div className={containerClasses} onClick={onClose}>
       <div className={boxClasses} onClick={(e) => e.stopPropagation()}>
-        {/* Search Input Bar */}
         <div className="relative flex items-center px-4 py-4 border-b border-zinc-800/80 bg-zinc-900/40">
-          <Search className="w-5 h-5 text-zinc-400 mr-3 shrink-0" />
+          <span className="text-emerald-500/80 select-none font-bold mr-3 shrink-0">$</span>
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleInputKeyDown}
-            placeholder="Search software, installation guides, fixes, or alternatives... (e.g. niri, wayland, x display, audio)"
-            className="w-full bg-transparent text-white placeholder-zinc-500 font-sans text-base sm:text-lg focus:outline-none pr-8"
+            placeholder="Search software, commands, error messages, or fixes..."
+            className="w-full bg-transparent text-white placeholder-zinc-600 font-mono text-sm sm:text-base focus:outline-none pr-8"
           />
           {query ? (
             <button
@@ -135,16 +239,15 @@ export default function SearchBar({
               <X className="w-4 h-4" />
             </button>
           ) : (
-            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded bg-zinc-800/80 border border-zinc-700/80 text-zinc-400 font-mono text-xs select-none">
+            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-500 text-xs select-none">
               <Command className="w-3 h-3" />
               <span>K</span>
             </div>
           )}
         </div>
 
-        {/* Results Dropdown */}
         {results.length > 0 && (
-          <div className="max-h-[60vh] overflow-y-auto divide-y divide-zinc-800/60 p-2 bg-zinc-950/80">
+          <div className="max-h-[60vh] overflow-y-auto divide-y divide-zinc-800/60 p-2 bg-zinc-950">
             {results.map((item, idx) => {
               const isSelected = idx === selectedIndex;
               return (
@@ -162,11 +265,11 @@ export default function SearchBar({
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-sm sm:text-base text-white truncate">
+                        <span className="font-semibold text-sm sm:text-base text-white truncate font-sans">
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-800 border border-zinc-700/80 text-zinc-400">
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-zinc-400">
                             {item.badge}
                           </span>
                         )}
@@ -199,29 +302,12 @@ export default function SearchBar({
           </div>
         )}
 
-        {/* Empty state when searching */}
         {query && results.length === 0 && (
-          <div className="p-12 text-center text-zinc-500">
-            <p className="text-base font-medium text-zinc-400">No playbooks found for &ldquo;{query}&rdquo;</p>
-            <p className="text-xs mt-1">Try searching for an error message (like &ldquo;display&rdquo; or &ldquo;lock&rdquo;) or a tool (like &ldquo;niri&rdquo; or &ldquo;pipewire&rdquo;).</p>
+          <div className="p-8 text-center text-zinc-500 font-sans">
+            <p className="text-sm font-medium text-zinc-400">No playbooks found for &ldquo;{query}&rdquo;</p>
+            <p className="text-xs mt-1 text-zinc-600">Try searching for an error message or tool name.</p>
           </div>
         )}
-
-        {/* Footer shortcuts helper */}
-        <div className="px-4 py-2.5 bg-zinc-900/60 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-500 font-mono">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-[10px]">↑↓</kbd> navigate
-            </span>
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-[10px]">↵</kbd> select
-            </span>
-            <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-[10px]">esc</kbd> close
-            </span>
-          </div>
-          <span>⚡ Under 30s resolution</span>
-        </div>
       </div>
     </div>
   );

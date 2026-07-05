@@ -45,6 +45,42 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
           ]
         },
         sourceUrl: 'https://github.com/YaLTeR/niri'
+      },
+      {
+        id: 'arch-pacman',
+        distro: 'Arch',
+        command: `sudo pacman -Syu --needed niri xdg-desktop-portal-gnome waybar alacritty`,
+        verificationCommand: `niri --version`,
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~12 MB',
+        whyThisMethod: {
+          summary: 'Arch Linux maintains Niri directly in its official Extra repository with zero build time required.',
+          points: [
+            'Instant binary installation via pacman',
+            'Automatic dependency resolution for Wayland protocols',
+            'Rolling release always ships the latest upstream release'
+          ]
+        },
+        sourceUrl: 'https://archlinux.org/packages/extra/x86_64/niri/'
+      },
+      {
+        id: 'fedora-copr',
+        distro: 'Fedora',
+        command: `sudo dnf copr enable -y yalter/niri && sudo dnf install -y niri`,
+        verificationCommand: `niri --version`,
+        isRecommended: true,
+        isOfficial: false,
+        sizeEstimate: '~15 MB',
+        whyThisMethod: {
+          summary: 'Official upstream COPR repository maintained by Niri creator YaLTeR for Fedora Workstation/Server.',
+          points: [
+            'Maintained directly by upstream author YaLTeR',
+            'Precompiled RPM binaries optimized for Fedora',
+            'Seamless integration with systemd user sessions'
+          ]
+        },
+        sourceUrl: 'https://copr.fedorainfracloud.org/coprs/yalter/niri/'
       }
     ],
     problems: [
