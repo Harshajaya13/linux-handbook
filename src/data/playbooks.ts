@@ -207,6 +207,49 @@ sudo install -Dm755 target/release/niri /usr/local/bin/niri`,
         ],
         verificationCommand: `echo $MOZ_ENABLE_WAYLAND`,
         explanation: 'Enabling Wayland natively allows Zen to render crisp fonts and handle touchscreen/touchpad gestures smoothly.'
+      },
+      {
+        id: 'dark-mode-override',
+        title: 'Webpages display in incorrect light/dark mode or system theme mismatched',
+        symptoms: ['Aggressive dark mode forced on websites', 'Websites ignore system theme or refuse to show light mode'],
+        cause: 'Zen Browser has a flag layout.css.prefers-color-scheme.content-override that controls the color scheme override policy for web contents.',
+        solution: 'Change layout.css.prefers-color-scheme.content-override in about:config to 1 (force Light mode) or 3 (follow system theme).',
+        commands: [
+          '# 1. Open a new tab in Zen, type about:config in the URL bar and press Enter. Accept the warning.',
+          '# 2. Search for: layout.css.prefers-color-scheme.content-override',
+          '# 3. Change its value to 1 (forces Light mode) or 3 (follows system theme). (If set to 2, it aggressively forces dark mode on everything).'
+        ],
+        explanation: 'Configuring the content override preference gives you control over color themes on individual websites without breaking general browser styling.'
+      },
+      {
+        id: 'pdf-invert-colors',
+        title: 'PDF pages render with inverted or incorrect colors in built-in PDF viewer',
+        symptoms: ['PDF backgrounds are dark or text is unreadable', 'Images inside PDFs have inverted/incorrect colors'],
+        cause: "By default, the Firefox/Zen PDF reader (pdf.js) may not match page colors to the browser's theme settings.",
+        solution: 'Toggle pdfjs.forcePageColors to true in about:config to force standard page colors.',
+        commands: [
+          '# 1. Open a new tab in Zen, type about:config in the address bar and press Enter. Accept the warning.',
+          '# 2. Search for: pdfjs.forcePageColors',
+          '# 3. Click the toggle button on the right to change its value from false to true.'
+        ],
+        explanation: 'Forcing page colors inside pdf.js forces the PDF viewer to respect document background and text defaults, preventing color inversion on images and drawings.'
+      },
+      {
+        id: 'addon-restricted-domains',
+        title: 'Extensions (like Dark Reader) fail to run on internal settings/addons pages',
+        symptoms: ['Dark Reader cannot theme internal Zen settings or about: pages', 'Extensions are disabled on certain secure domains or Mozilla pages'],
+        cause: 'Zen/Firefox restricts extensions from running on system pages or restricted domains for security, which can be bypassed via about:config.',
+        solution: 'Clear restricted domains and allow mozAddonManager access, then grant explicit extension permissions.',
+        commands: [
+          '# 1. In about:config, search for: extensions.webextensions.restrictedDomains',
+          '# 2. Double-click it (or click the pencil icon) and clear the entire text box so it is completely empty. Click checkmark to save.',
+          '# 3. Search for: privacy.resistFingerprinting.block_mozAddonManager',
+          '# 4. Click the toggle button to change it from false to true.',
+          '# 5. Open your Dark Reader settings popup -> Settings (gear icon) -> Advanced -> Check "Enable on internal browser pages".',
+          '# 6. Or in Zen\'s Add-ons manager (about:addons), click Dark Reader -> Permissions tab -> enable "Access browser tabs" and "Run on top of restricted sites".',
+          '# 7. If needed, back in about:config, search for: ui.systemUsesDarkTheme and set it to 1 to force native dark styling for internal pages.'
+        ],
+        explanation: 'Clearing restricted domains and allowing addon manager access lifts the default sandboxing restrictions, enabling extensions like Dark Reader to theme all pages.'
       }
     ],
     alternatives: [
