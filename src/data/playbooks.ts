@@ -564,9 +564,7 @@ chsh -s $(which fish)`,
         id: 'deb-download',
         distro: 'Ubuntu',
         command: `wget -O ~/Downloads/code.deb "https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64"
-sudo apt install -y ~/Downloads/code.deb
-rm ~/Downloads/code.deb
-# Launch with native Wayland flags:
+sudo apt install ~/Downloads/code.deb
 code --enable-features=UseOzonePlatform --ozone-platform=wayland`,
         verificationCommand: `code --version`,
         isRecommended: true,
@@ -1035,5 +1033,499 @@ sudo apt update && sudo apt install -y onlyoffice-desktopeditors`,
       { id: '10', author: 'contributor', date: '2026-07-05', content: 'OnlyOffice handles Microsoft Excel complex formulas and pivot tables much better than LibreOffice Calc!', upvotes: 41 }
     ],
     popularRank: 10
+  },
+  {
+    slug: 'git-ssh',
+    name: 'Git & GitHub SSH',
+    tagline: 'Configure global Git identity settings and set up secure GitHub SSH authentication.',
+    category: 'Development',
+    whyChoose: [
+      'Secure passwordless SSH authentication',
+      'Prevents entering password on every git push',
+      'Global identity configuration (user.name/email)',
+      'Enables main as the default initialization branch',
+      'Avoids merge commits on pull with rebase setting'
+    ],
+    overview: {
+      whatIsIt: 'Git is the industry-standard version control system. SSH keys authenticate with GitHub/GitLab securely without exposing your account password.',
+      whoIsItFor: 'Developers setting up a new Linux system who need to configure their git identity and connect to remote GitHub repositories.',
+      officialWebsite: 'https://git-scm.com',
+      version: 'Git 2.40+ & OpenSSH',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'git-ssh-setup',
+        distro: 'Ubuntu',
+        command: `git config --global user.name "Harsha Vardhan"
+git config --global user.email "harshajaya13@gmail.com"
+git config --global init.defaultBranch main
+git config --global pull.rebase false
+git config --list
+
+ssh-keygen -t ed25519 -C "YOUR_GITHUB_EMAIL"
+# use pass
+eval (ssh-agent -c)
+ssh-add ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub`,
+        verificationCommand: `git --version && ssh -T git@github.com 2>&1 | grep -i "successfully authenticated"`,
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~5 MB',
+        whyThisMethod: {
+          summary: 'Standard SSH-keygen and Git configuration commands setup secure authentication and configure global identity parameters.',
+          points: [
+            'Creates cryptographically strong Ed25519 SSH keys',
+            'Starts local ssh-agent process for session cache',
+            'Sets main as the default Git branch name',
+            'Disables implicit rebase on git pull'
+          ]
+        },
+        sourceUrl: 'https://docs.github.com/en/authentication/connecting-to-github-with-ssh'
+      }
+    ],
+    problems: [
+      {
+        id: 'ssh-agent-not-running',
+        title: 'Could not open a connection to your authentication agent',
+        symptoms: [
+          "Error: ssh-add fails with 'Could not open a connection to your authentication agent'",
+          'SSH key passphrase must be typed every single time'
+        ],
+        cause: 'The ssh-agent background daemon is not running or its environment variables are not loaded in the current terminal shell.',
+        solution: 'Start the ssh-agent manually or add an automatic startup script to your shell configuration.',
+        commands: [
+          'eval (ssh-agent -c) # For fish shell',
+          'eval "$(ssh-agent -s)" # For bash/zsh shell',
+          'ssh-add ~/.ssh/id_ed25519'
+        ],
+        verificationCommand: 'echo $SSH_AUTH_SOCK',
+        explanation: 'Starting ssh-agent sets the SSH_AUTH_SOCK environment variable, allowing ssh-add to register your key for the session.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'github-cli',
+        name: 'GitHub CLI (gh)',
+        tag: 'Best Alternative',
+        whyItExists: 'Official command-line client to manage repositories, PRs, and authenticate Git via browser OAuth.',
+        compatibility: 'Excellent',
+        license: 'MIT',
+        resourceUsage: 'Low',
+        pros: [
+          'Automated OAuth authentication',
+          'Manage pull requests and issues from terminal',
+          'Integrates seamlessly with GitHub API'
+        ],
+        cons: [
+          "GitHub-specific tool (doesn't support GitLab/Bitbucket)"
+        ],
+        installCommand: 'sudo apt install gh'
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '~/.gitconfig', description: 'Contains all global Git configurations (user identity, aliases, defaults).' },
+      { type: 'Configuration', path: '~/.ssh/config', description: 'Custom host definitions, port settings, and key mappings for SSH clients.' },
+      { type: 'Data Directory', path: '~/.ssh/', description: 'Directory containing private/public keys, authorized hosts, and configurations.' }
+    ],
+    uninstall: {
+      normal: { title: 'Reset Global Git Config', command: 'rm -f ~/.gitconfig', description: 'Clears global Git configuration variables.' },
+      removeConfig: { title: 'Delete SSH Keys', command: 'rm -f ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub', description: 'Deletes the specific Ed25519 SSH public and private keys.' },
+      completeCleanup: { title: 'Purge Git & SSH settings', command: 'rm -rf ~/.gitconfig ~/.ssh', description: 'Completely removes Git configuration files and all SSH keys/configurations.' }
+    },
+    communityNotes: [
+      { id: '11', author: 'contributor', date: '2026-07-08', content: 'For Fish shell users, adding SSH agent startup to your fish config or using a plugin like keychain handles key unlocking automatically on shell startup!', upvotes: 15 }
+    ],
+    popularRank: 11
+  },
+  {
+    slug: 'astral-uv',
+    name: 'Astral uv',
+    tagline: 'An extremely fast Python package installer and resolver written in Rust.',
+    category: 'Development',
+    whyChoose: [
+      'Up to 100x faster than traditional pip',
+      'Built-in virtual environment management',
+      'Drop-in replacement for pip, pip-tools, and virtualenv',
+      'No Python dependency required (compiled native binary)',
+      'Global tool isolation (uv tool install)'
+    ],
+    overview: {
+      whatIsIt: 'uv is a fast, single-binary Python package manager written in Rust, designed to replace pip, pip-tools, pipx, and virtualenv.',
+      whoIsItFor: 'Python developers who want instantaneous package installations, clean dependency resolution, and seamless virtual environment management.',
+      officialWebsite: 'https://docs.astral.sh/uv/',
+      version: 'Latest Release',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'uv-fish-install',
+        distro: 'Ubuntu',
+        command: `curl -LsSf https://astral.sh/uv/install.sh | sh
+source ~/.config/fish/config.fish
+fish_add_path ~/.local/bin`,
+        verificationCommand: `uv --version`,
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~12 MB',
+        whyThisMethod: {
+          summary: 'Downloads the latest pre-compiled Rust binary and updates shell environment path variables.',
+          points: [
+            'Always fetches the latest upstream binary release',
+            'Installs locally inside ~/.local/bin/',
+            'Registers path within Fish shell for instant terminal access'
+          ]
+        },
+        sourceUrl: 'https://github.com/astral-sh/uv'
+      }
+    ],
+    problems: [
+      {
+        id: 'uv-path-missing',
+        title: "Command 'uv' not found after successful installation",
+        symptoms: [
+          "bash: command not found: uv",
+          "fish: Unknown command: uv"
+        ],
+        cause: "The directory ~/.local/bin where uv was installed is not present in your system's PATH variable.",
+        solution: 'Add the binary directory to your shell configuration file and reload the shell.',
+        commands: [
+          'fish_add_path ~/.local/bin # For fish shell',
+          "echo 'export PATH=\"\$HOME/.local/bin:\$PATH\"' >> ~/.bashrc # For bash"
+        ],
+        verificationCommand: 'which uv',
+        explanation: 'Updating PATH allows the shell to find the uv executable dynamically during terminal execution.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'pipx',
+        name: 'pipx',
+        tag: 'Open-Source Alternative',
+        whyItExists: 'Tool to install and run Python applications in isolated environments.',
+        compatibility: 'Excellent',
+        license: 'MIT',
+        resourceUsage: 'Low',
+        pros: [
+          'Creates isolated virtualenvs automatically',
+          'Maintains clean global shell bins',
+          'Pre-installed in many developer distributions'
+        ],
+        cons: [
+          'Built on top of standard pip (slow package installation times)'
+        ],
+        installCommand: 'sudo apt install pipx'
+      }
+    ],
+    configFiles: [
+      { type: 'Binary Location', path: '~/.local/bin/uv', description: 'Standalone compiled Rust executable binary.' },
+      { type: 'Cache', path: '~/.cache/uv/', description: 'Cached package wheels and dependency indices.' }
+    ],
+    uninstall: {
+      normal: { title: 'Remove uv Binary', command: 'rm -f ~/.local/bin/uv ~/.local/bin/uvx', description: 'Removes the uv and uvx executable binaries.' },
+      removeConfig: { title: 'Clear Download Cache', command: 'rm -rf ~/.cache/uv', description: 'Wipes the cached Python package wheels and installation archives.' },
+      completeCleanup: { title: 'Full uv Cleanup', command: 'rm -f ~/.local/bin/uv ~/.local/bin/uvx && rm -rf ~/.cache/uv', description: 'Wipes uv binaries and all download/metadata caches.' }
+    },
+    communityNotes: [
+      { id: '12', author: 'contributor', date: '2026-07-08', content: 'uv compile commands and pyproject.toml support make it an incredibly fast pip-tools alternative for generating lockfiles!', upvotes: 38 }
+    ],
+    popularRank: 12
+  },
+  {
+    slug: 'lazygit',
+    name: 'Lazygit',
+    tagline: 'A simple terminal UI for git commands, written in Go.',
+    category: 'Productivity',
+    whyChoose: [
+      'Interactive staging, committing, and rebasing',
+      'Fast branch checkout and merge conflict resolution',
+      'Rich terminal GUI without mouse dependence',
+      'Visualize git tree branch graph in real-time',
+      'Written in Go for cross-platform speed'
+    ],
+    overview: {
+      whatIsIt: 'Lazygit is a keyboard-driven terminal user interface for git commands. It lets you stage lines/files, commit, push, merge, rebase, and checkout branches with single keystrokes.',
+      whoIsItFor: 'Developers who want a fast visual git interface inside their terminal instead of typing long git commands or launching bulky Electron GUI clients.',
+      officialWebsite: 'https://github.com/jesseduffield/lazygit',
+      version: 'Latest Release',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'lazygit-binary-install',
+        distro: 'Ubuntu',
+        command: `set LAZYGIT_VERSION (curl -s https://api.github.com/repos/jesseduffield/lazygit/releases/latest | grep -Po '"tag_name": "v\\K[^"]*')
+curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_\${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+tar xf lazygit.tar.gz lazygit
+sudo install lazygit /usr/local/bin
+rm lazygit lazygit.tar.gz`,
+        verificationCommand: `lazygit --version`,
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~15 MB',
+        whyThisMethod: {
+          summary: 'Compiles and fetches the latest binary archive from GitHub releases, avoiding outdated system apt repository packages.',
+          points: [
+            'Installs the latest upstream stable release',
+            'System-wide installation in /usr/local/bin/',
+            'Cleans up temporary download archives post-install'
+          ]
+        },
+        sourceUrl: 'https://github.com/jesseduffield/lazygit'
+      }
+    ],
+    problems: [
+      {
+        id: 'lazygit-terminal-colors',
+        title: 'Broken layout or color display issues in legacy terminal emulators',
+        symptoms: [
+          'Flickering borders when scrolling',
+          'Text colors are unreadable or black-on-black'
+        ],
+        cause: 'The terminal does not support 24-bit truecolor or does not match the lazygit custom color scheme.',
+        solution: 'Enable truecolor configuration in your terminal settings or customize lazygit config.',
+        commands: [
+          'echo "set -gx COLORTERM truecolor" >> ~/.config/fish/config.fish'
+        ],
+        verificationCommand: 'echo $COLORTERM',
+        explanation: 'Setting COLORTERM tells Go terminal UI libraries to render borders and text with full 24-bit color depth.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'gitui',
+        name: 'GitUI',
+        tag: 'Lightweight Alternative',
+        whyItExists: 'Blazing fast terminal git client written in Rust with vim-like keybindings.',
+        compatibility: 'Excellent',
+        license: 'MIT',
+        resourceUsage: 'Very Low',
+        pros: [
+          'Significantly faster on extremely large repositories',
+          'Extremely low memory footprint',
+          'Vim-inspired keyboard controls'
+        ],
+        cons: [
+          'Smaller community than lazygit',
+          'Fewer visual layout custom options'
+        ],
+        installCommand: 'cargo install gitui'
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '~/.config/lazygit/config.yml', description: 'Keybindings, color theme overrides, and custom git settings.' },
+      { type: 'Binary Location', path: '/usr/local/bin/lazygit', description: 'Installed system binary executable.' }
+    ],
+    uninstall: {
+      normal: { title: 'Remove System Binary', command: 'sudo rm -f /usr/local/bin/lazygit', description: 'Removes the lazygit executable file from your system.' },
+      removeConfig: { title: 'Delete Custom Theme', command: 'rm -rf ~/.config/lazygit', description: 'Deletes user settings and local state files.' },
+      completeCleanup: { title: 'Full Purge', command: 'sudo rm -f /usr/local/bin/lazygit && rm -rf ~/.config/lazygit', description: 'Wipes binary, configurations, and cache folders.' }
+    },
+    communityNotes: [
+      { id: '13', author: 'contributor', date: '2026-07-08', content: "Pressing 'w' in lazygit opens an interactive rebase screen where you can squash, edit, or drop commits visually!", upvotes: 42 }
+    ],
+    popularRank: 13
+  },
+  {
+    slug: 'gtk-themes',
+    name: 'GTK Themes & Dark Mode',
+    tagline: 'Configure GTK3 and GTK4 applications to prefer dark mode themes and custom assets.',
+    category: 'System & Drivers',
+    whyChoose: [
+      'Forces dark mode preferences across legacy and modern GTK apps',
+      'Fixes unreadable light panels in dark window managers (like Niri/Sway)',
+      'Sets fallback icon themes correctly (Adwaita)',
+      'Enables system-wide theme compliance without a desktop control panel'
+    ],
+    overview: {
+      whatIsIt: 'GTK (GIMP Toolkit) manages the UI structure and styling of many Linux desktop apps. In minimal setups without GNOME or KDE (like Wayland tiling compositors), you must configure GTK settings via configuration files manually.',
+      whoIsItFor: 'Users running custom Wayland/X11 window managers who want dark mode compatibility and correct icon sets across GTK3 and GTK4 apps.',
+      officialWebsite: 'https://www.gtk.org',
+      version: 'GTK3 & GTK4 configurations',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'gtk-theme-config',
+        distro: 'Ubuntu',
+        command: `find /usr/share/themes -maxdepth 1 -type d
+pkg-config --modversion gtk4
+pkg-config --modversion gtk+-3.0
+pkg-config --modversion gtk+-2.0
+dpkg -l | grep icon-theme
+ls ~/.config/gtk-3.0
+ls ~/.config/gtk-4.0
+
+# If they don't exist:
+mkdir -p ~/.config/gtk-3.0
+mkdir -p ~/.config/gtk-4.0
+
+sudo apt install -y adwaita-icon-theme libgtk-3-common libgtk-4-common
+
+apt search adwaita | grep -i theme
+
+sudo apt install -y gnome-themes-extra gnome-themes-extra-data
+mkdir -p ~/.config/gtk-3.0
+mkdir -p ~/.config/gtk-4.0
+printf "[Settings]\\ngtk-theme-name=Adwaita-dark\\ngtk-icon-theme-name=Adwaita\\ngtk-application-prefer-dark-theme=1\\n" > ~/.config/gtk-3.0/settings.ini
+printf "[Settings]\\ngtk-theme-name=Adwaita-dark\\ngtk-icon-theme-name=Adwaita\\ngtk-application-prefer-dark-theme=1\\n" > ~/.config/gtk-4.0/settings.ini`,
+        verificationCommand: `cat ~/.config/gtk-4.0/settings.ini`,
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~45 MB',
+        whyThisMethod: {
+          summary: 'Installs the standard GNOME Adwaita dark theme asset library and creates setting shims directly under the user config directory.',
+          points: [
+            'Installs native dark theme styles',
+            'Creates standardized settings.ini files for GTK3 & GTK4 compatibility',
+            'Bypasses the need for large settings-daemon controllers'
+          ]
+        },
+        sourceUrl: 'https://wiki.archlinux.org/title/GTK'
+      }
+    ],
+    problems: [
+      {
+        id: 'gtk-theme-not-applied',
+        title: 'GTK applications still open in high-contrast light mode',
+        symptoms: [
+          'Certain flatpaks or appimages ignore settings.ini',
+          'Applications display white backgrounds despite config overrides'
+        ],
+        cause: 'Some sandboxed flatpak applications cannot access ~/.config/gtk-3.0 directly or require xdg-desktop-portal settings.',
+        solution: 'Grant Flatpak permissions or install flatpak theme matching packages.',
+        commands: [
+          'flatpak override --user --filesystem=xdg-config/gtk-3.0:ro',
+          'flatpak override --user --filesystem=xdg-config/gtk-4.0:ro'
+        ],
+        verificationCommand: 'flatpak override --user --list',
+        explanation: 'Allowing flatpaks read-only access to xdg-config configurations links sandbox themes to host overrides.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'lxappearance',
+        name: 'LXAppearance',
+        tag: 'Open-Source Alternative',
+        whyItExists: 'Lightweight GUI desktop program that updates settings.ini settings with a visual point-and-click interface.',
+        compatibility: 'Good',
+        license: 'GPL-2.0',
+        resourceUsage: 'Low',
+        pros: [
+          'Visual theme and icon list selector',
+          'Writes configurations correctly without manual text editing',
+          'Extremely lightweight (no daemon run required)'
+        ],
+        cons: [
+          'Does not configure modern GTK4 settings.ini profiles by default'
+        ],
+        installCommand: 'sudo apt install lxappearance'
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '~/.config/gtk-3.0/settings.ini', description: 'Primary settings overrides for GTK3 engine applications.' },
+      { type: 'Configuration', path: '~/.config/gtk-4.0/settings.ini', description: 'Primary settings overrides for GTK4 engine applications.' }
+    ],
+    uninstall: {
+      normal: { title: 'Reset Theme Preferences', command: 'rm -f ~/.config/gtk-3.0/settings.ini ~/.config/gtk-4.0/settings.ini', description: 'Restores GTK styling preferences back to defaults.' },
+      removeConfig: { title: 'Delete GTK User Folders', command: 'rm -rf ~/.config/gtk-3.0 ~/.config/gtk-4.0', description: 'Wipes GTK configuration folders completely.' },
+      completeCleanup: { title: 'Wipe Theme Configs & Packages', command: 'rm -rf ~/.config/gtk-3.0 ~/.config/gtk-4.0 && sudo apt remove --purge -y gnome-themes-extra', description: 'Deletes configurations and removes extra GNOME theme packages.' }
+    },
+    communityNotes: [
+      { id: '14', author: 'contributor', date: '2026-07-08', content: 'For a completely unified look on Wayland tiling managers, ensure the environment variable GTK_THEME=Adwaita-dark is set in your session file!', upvotes: 27 }
+    ],
+    popularRank: 14
+  },
+  {
+    slug: 'fonts-system',
+    name: 'System Fonts & Emojis',
+    tagline: 'Install Font Awesome icons and Noto Color Emoji packages, and refresh system caches.',
+    category: 'System & Drivers',
+    whyChoose: [
+      'Fixes broken block symbols in status bars (Waybar/Polybar)',
+      'Enables rich full-color emoji rendering inside browsers and terminals',
+      'Refreshes system font cache files immediately',
+      'Guarantees correct font mapping for custom desktop shells'
+    ],
+    overview: {
+      whatIsIt: 'Fonts like Font Awesome contain graphical symbols needed for status bar widgets, while Noto Color Emoji provides fallback color emoji glyphs.',
+      whoIsItFor: 'Users running minimal Linux installations or custom shells who see square blocks (\'tofu\') instead of emojis or icons in status bars and documents.',
+      officialWebsite: 'https://fonts.google.com/noto',
+      version: 'Latest font packages',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'system-font-install',
+        distro: 'Ubuntu',
+        command: `sudo apt install -y fonts-font-awesome fonts-noto-color-emoji
+fc-cache -r -v`,
+        verificationCommand: `fc-list | grep -i "Awesome"`,
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~35 MB',
+        whyThisMethod: {
+          summary: 'Installs community standard icon/emoji fonts via apt and rebuilds fontconfig indices for immediate recognition.',
+          points: [
+            'Installs official Ubuntu packaged fonts',
+            'Updates fontconfig caches instantly without rebooting',
+            'Resolves missing glyph symbols in Waybar and browsers'
+          ]
+        },
+        sourceUrl: 'https://wiki.debian.org/Fonts'
+      }
+    ],
+    problems: [
+      {
+        id: 'emoji-black-and-white',
+        title: 'Emojis render as plain outline boxes or black-and-white drawings',
+        symptoms: [
+          'Chrome or Firefox displays monochrome emoji glyphs',
+          'Terminals fall back to simple symbol outlines'
+        ],
+        cause: 'Fontconfig prioritizes legacy black-and-white bitmap or glyph fonts over Noto Color Emoji.',
+        solution: 'Create a custom fontconfig XML rule prioritizing Noto Color Emoji as a fallback.',
+        commands: [
+          'mkdir -p ~/.config/fontconfig',
+          "printf '<?xml version=\"1.5\"?>\\n<fontconfig>\\n  <alias>\\n    <family>sans-serif</family>\\n    <prefer><family>Noto Color Emoji</family></prefer>\\n  </alias>\\n</fontconfig>\\n' > ~/.config/fontconfig/fonts.conf",
+          'fc-cache -fv'
+        ],
+        verificationCommand: 'fc-match sans-serif',
+        explanation: 'Setting Noto Color Emoji as the preferred fallback inside fonts.conf instructs fontconfig to use color glyphs.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'nerd-fonts',
+        name: 'Nerd Fonts',
+        tag: 'Best Alternative',
+        whyItExists: 'Developer font collections patched with high counts of developer icons (Devicons, Font Awesome, Octicons).',
+        compatibility: 'Excellent',
+        license: 'MIT / SIL OFL',
+        resourceUsage: 'Low',
+        pros: [
+          'Contains thousands of icons inside a single font file',
+          'Popular developer fonts (Fira Code, JetBrains Mono) are pre-patched'
+        ],
+        cons: [
+          'Large file sizes for full font families'
+        ],
+        installCommand: 'mkdir -p ~/.local/share/fonts && curl -OL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz && tar -xf JetBrainsMono.tar.xz -C ~/.local/share/fonts && fc-cache -fv'
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '~/.config/fontconfig/fonts.conf', description: 'User-specific font rendering and family priority rules.' },
+      { type: 'Cache', path: '~/.cache/fontconfig/', description: 'Locally cached font mappings compiled by fontconfig.' }
+    ],
+    uninstall: {
+      normal: { title: 'Delete Font Configuration', command: 'rm -f ~/.config/fontconfig/fonts.conf', description: 'Clears custom font fallback preferences.' },
+      removeConfig: { title: 'Clear Font Config Cache', command: 'rm -rf ~/.cache/fontconfig', description: 'Deletes local fontconfig configuration caches.' },
+      completeCleanup: { title: 'Wipe Settings & Packages', command: 'sudo apt remove --purge -y fonts-font-awesome fonts-noto-color-emoji && rm -rf ~/.config/fontconfig ~/.cache/fontconfig', description: 'Removes font packages, custom configuration rules, and caches.' }
+    },
+    communityNotes: [
+      { id: '15', author: 'contributor', date: '2026-07-08', content: "Run 'fc-list : family | sort -u' to view every single font family name recognized by your system!", upvotes: 31 }
+    ],
+    popularRank: 15
   }
 ];
+
