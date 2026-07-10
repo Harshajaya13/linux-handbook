@@ -77,7 +77,7 @@ export default function InstallSection({ playbook }: InstallSectionProps) {
                 <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-white/[0.04]">
                   <div className="flex items-center gap-3 flex-wrap">
                     <h3 className="font-bold text-[#f4f4f5] text-xl sm:text-2xl font-display tracking-tight">
-                      Install via {selectedDistro}
+                      {method.title || `Install via ${selectedDistro}`}
                     </h3>
                     {method.sizeEstimate && (
                       <span className="text-xs font-sans text-zinc-500 font-medium">

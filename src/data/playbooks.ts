@@ -1593,39 +1593,175 @@ fc-cache -r -v`,
       {
         id: 'netplan-networkmanager',
         distro: 'Ubuntu',
-        command: `# Step 1: Install NetworkManager package
-sudo apt update && sudo apt install -y network-manager
+        title: '1. Switch Renderer to NetworkManager',
+        command: `# Check link status & NetworkManager status
+networkctl
+systemctl status NetworkManager
 
-# Step 2: Enable and start the NetworkManager daemon
+# Install NetworkManager if it's missing
+sudo apt update && sudo apt install -y network-manager
 sudo systemctl enable NetworkManager
 sudo systemctl start NetworkManager
 
-# Step 3: Tell Netplan to use NetworkManager renderer
-# Open Netplan config: sudo nano /etc/netplan/*.yaml
-# Update or add "renderer: NetworkManager" under the network block.
-# Example content:
+# Edit Netplan config to use NetworkManager renderer
+# Change 'renderer: networkd' to 'renderer: NetworkManager'
+sudo nano /etc/netplan/*.yaml
+
+# Example Netplan YAML file content:
+# ====================================
 # network:
 #   version: 2
 #   renderer: NetworkManager
+#   wifis:
+#     wlp2s0:
+#       dhcp4: true
+#       access-points:
+#         "Anits BH":
+#           password: "Anits@#$2024"
+# ====================================
 
-# Step 4: Apply the Netplan configuration
+# Apply Netplan and restart NetworkManager
 sudo netplan apply
-
-# Step 5: Restart the NetworkManager service
 sudo systemctl restart NetworkManager`,
-        verificationCommand: `nmcli device`,
+        verificationCommand: `nmcli device && nmcli connection show`,
         isRecommended: true,
         isOfficial: true,
         sizeEstimate: '~15 MB',
         whyThisMethod: {
-          summary: 'Configuring Netplan to render via NetworkManager enables dynamic terminal-based wireless connection profile management via nmcli.',
+          summary: 'Migrates Ubuntu Server from rigid systemd-networkd to NetworkManager by updating the Netplan renderer.',
           points: [
-            'Migrates interface control away from rigid systemd-networkd',
-            'Automatically starts on system boot',
-            'Preserves Netplan schema compatibility'
+            'Required to support terminal-based wireless configurations',
+            'Saves configuration profiles cleanly in NetworkManager directories',
+            'Enables nmcli interface tool functionality'
           ]
         },
         sourceUrl: 'https://networkmanager.dev'
+      },
+      {
+        id: 'wifi-scan-connect',
+        distro: 'Ubuntu',
+        title: '2. Scan & Connect to wireless networks',
+        command: `# Scan nearby access points and list details
+nmcli device wifi list
+
+# Refresh/Rescan wireless interfaces manually
+nmcli device wifi rescan
+
+# Connect to WiFi network using SSID and password
+nmcli device wifi connect "SSID" password "PASSWORD"
+# Example: nmcli device wifi connect "Anits BH" password "Anits@#$2024"
+
+# Disconnect / Reconnect interface temporarily
+nmcli device disconnect wlp2s0
+nmcli device connect wlp2s0
+
+# See saved networks and forget/delete a profile
+nmcli connection show
+nmcli connection delete "Anits BH"`,
+        verificationCommand: `nmcli connection show --active`,
+        isRecommended: true,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Scan available wireless signals and authenticate directly with WPA/WPA2 networks using the nmcli utility.',
+          points: [
+            'Lists signal strength, bands, rates, and security modes',
+            'Authenticates securely and caches connection profiles automatically',
+            'Lets you temporarily disable interface radios'
+          ]
+        }
+      },
+      {
+        id: 'ethernet-routing',
+        distro: 'Ubuntu',
+        title: '3. Ethernet & Metric Routing Configuration',
+        command: `# Find ethernet interface names (e.g. enp1s0, enp2s0)
+ip link
+
+# Connect/Disconnect Ethernet interface
+nmcli device connect enp1s0
+nmcli device disconnect enp1s0
+
+# View routing table and metrics (lower metric takes priority)
+ip route`,
+        verificationCommand: `ip route show`,
+        isRecommended: false,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Binds wired Ethernet connections and checks route priorities for multi-interface setups.',
+          points: [
+            'Ensures fallback access if wireless fails',
+            'Manages route metrics for simultaneous interfaces'
+          ]
+        }
+      },
+      {
+        id: 'wifi-hotspot-setup',
+        distro: 'Ubuntu',
+        title: '4. Create & Control a WiFi Hotspot',
+        command: `# Start personal hotspot on wireless device interface
+nmcli device wifi hotspot ifname wlp2s0 ssid HarshaHotspot password MyPassword123
+
+# List active connections to find hotspot interface name
+nmcli connection show --active
+
+# Stop/disconnect the hotspot connection
+nmcli connection down Hotspot
+# (or) nmcli connection down <hotspot-name>
+
+# Bring hotspot profile back up
+nmcli connection up Hotspot
+
+# Delete hotspot profile permanently from saved connections
+nmcli connection delete Hotspot`,
+        verificationCommand: `nmcli connection show`,
+        isRecommended: false,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Broadcasts a wireless access point from your server, routing client packets dynamically.',
+          points: [
+            'Creates secure WPA2 hotspot instantly',
+            'Handles IP address lease dynamically for client devices',
+            'Persists as a reusable connection profile'
+          ]
+        }
+      },
+      {
+        id: 'network-diagnostics',
+        distro: 'Ubuntu',
+        title: '5. Network Diagnostics & Radio Controls',
+        command: `# Airplane Mode (Shut down all networking completely)
+nmcli networking off
+nmcli networking on
+
+# Check general NetworkManager and radio status
+nmcli general status
+nmcli radio
+
+# Toggle wireless radio off/on
+nmcli radio wifi off
+nmcli radio wifi on
+
+# Check IP address and routing details
+ip addr
+ip route
+
+# Verify internet connectivity and DNS resolution
+ping -c 4 8.8.8.8
+ping -c 4 google.com
+
+# Restart the NetworkManager service
+sudo systemctl restart NetworkManager`,
+        verificationCommand: `ping -c 2 8.8.8.8`,
+        isRecommended: false,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Run general diagnostic checks, toggles global radios, and verifies internet connectivity.',
+          points: [
+            'Controls RF transmitter states (rfkill)',
+            'Checks default gateway address and DNS lookup status',
+            'Performs simple troubleshooting test pings'
+          ]
+        }
       }
     ],
     problems: [

@@ -11,6 +11,7 @@ export type DistroType =
 export interface InstallMethod {
   id: string;
   distro: DistroType;
+  title?: string;
   command: string;
   verificationCommand?: string;
   isRecommended: boolean;
