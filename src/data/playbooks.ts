@@ -1569,6 +1569,152 @@ fc-cache -r -v`,
       { id: '15', author: 'contributor', date: '2026-07-08', content: "Run 'fc-list : family | sort -u' to view every single font family name recognized by your system!", upvotes: 31 }
     ],
     popularRank: 15
+  },
+  {
+    slug: 'wifi-setup',
+    name: 'WiFi & Network Manager',
+    tagline: 'Troubleshoot systemd-networkd, configure Netplan, and manage WiFi/Ethernet connections via nmcli.',
+    category: 'System & Drivers',
+    whyChoose: [
+      'Easiest way to configure headless server WiFi connections',
+      'Solves systemd-networkd IP lease and scanning issues',
+      'Control radio states, scan APs, and manage profiles via nmcli',
+      'Create and manage wireless hotspots in the terminal',
+      'Supports simultaneous Ethernet and WiFi routing metrics'
+    ],
+    overview: {
+      whatIsIt: 'Ubuntu Server defaults to systemd-networkd which can be difficult to use for dynamic wireless connections. Switching Netplan\'s renderer to NetworkManager allows full connection management via the nmcli command-line tool.',
+      whoIsItFor: 'Developers and system administrators running Ubuntu/Debian server configurations who need to configure WiFi/Ethernet or fix wireless connectivity issues.',
+      officialWebsite: 'https://networkmanager.dev',
+      version: 'NetworkManager 1.44+',
+      lastVerified: 'Ubuntu 24.04 LTS (Server)'
+    },
+    installMethods: [
+      {
+        id: 'netplan-networkmanager',
+        distro: 'Ubuntu',
+        command: `# Step 1: Install NetworkManager package
+sudo apt update && sudo apt install -y network-manager
+
+# Step 2: Enable and start the NetworkManager daemon
+sudo systemctl enable NetworkManager
+sudo systemctl start NetworkManager
+
+# Step 3: Tell Netplan to use NetworkManager renderer
+# Open Netplan config: sudo nano /etc/netplan/*.yaml
+# Update or add "renderer: NetworkManager" under the network block.
+# Example content:
+# network:
+#   version: 2
+#   renderer: NetworkManager
+
+# Step 4: Apply the Netplan configuration
+sudo netplan apply
+
+# Step 5: Restart the NetworkManager service
+sudo systemctl restart NetworkManager`,
+        verificationCommand: `nmcli device`,
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~15 MB',
+        whyThisMethod: {
+          summary: 'Configuring Netplan to render via NetworkManager enables dynamic terminal-based wireless connection profile management via nmcli.',
+          points: [
+            'Migrates interface control away from rigid systemd-networkd',
+            'Automatically starts on system boot',
+            'Preserves Netplan schema compatibility'
+          ]
+        },
+        sourceUrl: 'https://networkmanager.dev'
+      }
+    ],
+    problems: [
+      {
+        id: 'networkd-conflict',
+        title: 'Wireless interface not managed by NetworkManager',
+        symptoms: [
+          "nmcli device shows interface as 'unmanaged'",
+          'WiFi interface is up but cannot scan or connect'
+        ],
+        cause: 'The systemd-networkd backend or legacy netplan files are still locking the interface.',
+        solution: 'Check what is managing the network, update netplan renderer, and restart NetworkManager.',
+        commands: [
+          'networkctl # Check current link management state',
+          "sudo nano /etc/netplan/01-netcfg.yaml # Set 'renderer: NetworkManager'",
+          'sudo netplan apply && sudo systemctl restart NetworkManager'
+        ],
+        verificationCommand: 'nmcli device',
+        explanation: 'Forcing Netplan\'s renderer to NetworkManager tells netplan to stop systemd-networkd from claiming interface control.'
+      },
+      {
+        id: 'wifi-radio-disabled',
+        title: 'Wireless card is soft-blocked or radio is turned off',
+        symptoms: [
+          "nmcli device wifi list returns no results",
+          "WiFi device shows as 'unavailable'"
+        ],
+        cause: 'WiFi radio transmitter is software disabled in NetworkManager or kernel rfkill registers.',
+        solution: 'Turn on the wireless radio using nmcli commands.',
+        commands: [
+          'nmcli radio wifi on',
+          'nmcli device wifi rescan'
+        ],
+        verificationCommand: 'nmcli radio',
+        explanation: 'Turning on the radio unblocks the transmitter interface, allowing the network card to scan active SSIDs.'
+      },
+      {
+        id: 'hotspot-down',
+        title: 'Headless server hotspot connection fails to start or dies',
+        symptoms: [
+          'SSID HarshaHotspot not broadcasting',
+          'Clients fail to obtain IP when connecting to hotspot'
+        ],
+        cause: 'The hotspot connection profile is inactive or conflicts with existing client connections.',
+        solution: 'Bring down client connections, start the hotspot profile, or delete/recreate it.',
+        commands: [
+          'nmcli connection show --active # See active connections',
+          'nmcli connection down Hotspot # Disconnect hotspot',
+          'nmcli connection up Hotspot # Bring hotspot back up',
+          'nmcli connection delete Hotspot # Delete profile if broken'
+        ],
+        verificationCommand: 'nmcli connection show --active',
+        explanation: 'NetworkManager manages hotspots as connection profiles which can be activated, deactivated, or deleted just like normal WiFi client connections.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'wpa-supplicant',
+        name: 'wpa_supplicant & iw',
+        tag: 'Lightweight Alternative',
+        whyItExists: 'Low-level utilities for connecting to WPA/WPA2 wireless networks directly.',
+        compatibility: 'Excellent',
+        license: 'BSD-3-Clause',
+        resourceUsage: 'Very Low',
+        pros: [
+          'Extremely low memory footprint',
+          'Works without any high-level manager services like Netplan or NetworkManager'
+        ],
+        cons: [
+          'No automatic connection switching',
+          'Requires complex manual file configurations (/etc/wpa_supplicant.conf)'
+        ],
+        installCommand: 'sudo apt install wpasupplicant iw'
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '/etc/netplan/*.yaml', description: 'Netplan network settings and render backend mappings.' },
+      { type: 'Configuration', path: '/etc/NetworkManager/NetworkManager.conf', description: 'Global NetworkManager configuration file.' },
+      { type: 'Configuration', path: '/etc/NetworkManager/system-connections/', description: 'Directory containing individual saved WiFi and Ethernet connection profiles.' }
+    ],
+    uninstall: {
+      normal: { title: 'Stop NetworkManager Service', command: 'sudo systemctl stop NetworkManager && sudo systemctl disable NetworkManager', description: 'Halts execution and disables automated NetworkManager startup.' },
+      removeConfig: { title: 'Purge Package & Profiles', command: 'sudo apt remove --purge -y network-manager && sudo rm -rf /etc/NetworkManager', description: 'Uninstalls the package and purges all saved connection profile config files.' },
+      completeCleanup: { title: 'Full Restoration to networkd', command: 'sudo apt remove --purge -y network-manager && sudo sed -i \'s/renderer: NetworkManager/renderer: networkd/g\' /etc/netplan/*.yaml && sudo netplan apply', description: 'Removes NetworkManager, restores Netplan backend to systemd-networkd, and re-applies configuration.' }
+    },
+    communityNotes: [
+      { id: '17', author: 'contributor', date: '2026-07-10', content: 'To scan nearby WiFi networks and connect, run \'nmcli device wifi list\' and then \'nmcli device wifi connect "SSID" password "PASSWORD"\'!', upvotes: 62 }
+    ],
+    popularRank: 16
   }
 ];
 

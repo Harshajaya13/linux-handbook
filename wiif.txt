@@ -1,0 +1,383 @@
+You're right. We **did switch from `systemd-networkd` to `NetworkManager`**, and that's the important part. Here's the complete handbook section from the beginning, organized so you won't have to rediscover it.
+
+---
+
+# Ubuntu Server Networking Handbook
+
+## Phase 1. Check what is managing the network
+
+```bash
+networkctl
+```
+
+If you see interfaces managed by **systemd-networkd**, you're using `networkd`.
+
+Check NetworkManager:
+
+```bash
+systemctl status NetworkManager
+```
+
+---
+
+## Phase 2. Install NetworkManager (if missing)
+
+```bash
+sudo apt update
+sudo apt install network-manager
+```
+
+Enable it:
+
+```bash
+sudo systemctl enable NetworkManager
+sudo systemctl start NetworkManager
+```
+
+---
+
+## Phase 3. Tell Netplan to use NetworkManager
+
+Open:
+
+```bash
+sudo nano /etc/netplan/*.yaml
+```
+
+Change
+
+```yaml
+renderer: networkd
+```
+
+to
+
+```yaml
+renderer: NetworkManager
+```
+
+Example:
+
+```yaml
+network:
+  version: 2
+  renderer: NetworkManager
+
+  wifis:
+    wlp2s0:
+      dhcp4: true
+      access-points:
+        "Anits BH":
+          password: "Anits@#$2024"
+```
+
+Apply:
+
+```bash
+sudo netplan apply
+```
+
+Restart NetworkManager:
+
+```bash
+sudo systemctl restart NetworkManager
+```
+
+---
+
+# Phase 4. Verify
+
+Show devices:
+
+```bash
+nmcli device
+```
+
+Show connections:
+
+```bash
+nmcli connection show
+```
+
+Show active connection:
+
+```bash
+nmcli connection show --active
+```
+
+---
+
+# Phase 5. Scan WiFi
+
+```bash
+nmcli device wifi list
+```
+
+Refresh scan
+
+```bash
+nmcli device wifi rescan
+```
+
+---
+
+# Phase 6. Connect to WiFi
+
+```bash
+nmcli device wifi connect "SSID" password "PASSWORD"
+```
+
+Example
+
+```bash
+nmcli device wifi connect "Anits BH" password "Anits@#$2024"
+```
+
+---
+
+# Phase 7. Disconnect WiFi (temporary)
+
+```bash
+nmcli device disconnect wlp2s0
+```
+
+Reconnect
+
+```bash
+nmcli device connect wlp2s0
+```
+
+---
+
+# Phase 8. Turn WiFi radio OFF
+
+```bash
+nmcli radio wifi off
+```
+
+Turn it ON
+
+```bash
+nmcli radio wifi on
+```
+
+---
+
+# Phase 9. Forget a WiFi
+
+See saved networks
+
+```bash
+nmcli connection show
+```
+
+Delete one
+
+```bash
+nmcli connection delete "Anits BH"
+```
+
+---
+
+# Phase 10. Ethernet
+
+Find interface
+
+```bash
+ip link
+```
+
+Usually
+
+```
+enp1s0
+```
+
+or
+
+```
+enp2s0
+```
+
+Connect
+
+```bash
+nmcli device connect enp1s0
+```
+
+Disconnect
+
+```bash
+nmcli device disconnect enp1s0
+```
+
+---
+
+# Phase 11. WiFi + Ethernet together
+
+Both can stay connected.
+
+Check routes
+
+```bash
+ip route
+```
+
+Ubuntu chooses the interface with the better metric.
+
+---
+
+# Phase 12. Create Hotspot
+
+```bash
+nmcli device wifi hotspot \
+ifname wlp2s0 \
+ssid HarshaHotspot \
+password MyPassword123
+```
+
+---
+
+# Phase 13. Stop Hotspot
+
+See active connections
+
+```bash
+nmcli connection show --active
+```
+
+Disconnect hotspot
+
+```bash
+nmcli connection down Hotspot
+```
+
+or
+
+```bash
+nmcli connection down <hotspot-name>
+```
+
+---
+
+# Phase 14. Turn hotspot back on later
+
+```bash
+nmcli connection up Hotspot
+```
+
+---
+
+# Phase 15. Delete Hotspot permanently
+
+List connections
+
+```bash
+nmcli connection show
+```
+
+Delete
+
+```bash
+nmcli connection delete Hotspot
+```
+
+---
+
+# Phase 16. Airplane Mode
+
+Disable everything
+
+```bash
+nmcli networking off
+```
+
+Enable everything
+
+```bash
+nmcli networking on
+```
+
+---
+
+# Phase 17. Check IP
+
+```bash
+ip addr
+```
+
+---
+
+# Phase 18. Check Route
+
+```bash
+ip route
+```
+
+---
+
+# Phase 19. Test Internet
+
+Ping Google DNS
+
+```bash
+ping 8.8.8.8
+```
+
+Test DNS
+
+```bash
+ping google.com
+```
+
+---
+
+# Phase 20. Restart NetworkManager
+
+```bash
+sudo systemctl restart NetworkManager
+```
+
+---
+
+# Phase 21. Useful nmcli Commands
+
+List devices
+
+```bash
+nmcli device
+```
+
+List connections
+
+```bash
+nmcli connection show
+```
+
+Show active
+
+```bash
+nmcli connection show --active
+```
+
+Show WiFi
+
+```bash
+nmcli device wifi list
+```
+
+General status
+
+```bash
+nmcli general status
+```
+
+Radio status
+
+```bash
+nmcli radio
+```
+
+---
+
+This is the workflow I recommend keeping in your `linux-handbook`. Once you're using **NetworkManager**, nearly all day to day networking can be handled with `nmcli`. You rarely need to edit the Netplan YAML again unless you're changing the underlying configuration, such as static IPs or switching renderers.
