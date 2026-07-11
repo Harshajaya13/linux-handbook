@@ -1851,6 +1851,268 @@ sudo systemctl restart NetworkManager`,
       { id: '17', author: 'contributor', date: '2026-07-10', content: 'To scan nearby WiFi networks and connect, run \'nmcli device wifi list\' and then \'nmcli device wifi connect "SSID" password "PASSWORD"\'!', upvotes: 62 }
     ],
     popularRank: 16
+  },
+  {
+    slug: 'cryfs-git-encryption',
+    name: 'CryFS + Git Encrypted Vault',
+    tagline: 'Unbreakable local & cloud encryption using CryFS virtual workspaces and encrypted Git backups.',
+    category: 'System & Drivers',
+    whyChoose: [
+      'Defeats local root/sudo users when unmounted (mount point becomes completely empty)',
+      'Zero plain-text exposure on cloud servers like GitHub (Git tracks encrypted blocks only)',
+      'Seamless transparent encryption for daily writing (.odt, .md, diaries, checklists)',
+      'Protects both local storage at rest and remote Git backups',
+      'Clean separation between virtual workspace (~/odt) and secure vault (~/odt_encrypted)'
+    ],
+    overview: {
+      whatIsIt: 'A dual-directory architecture combining CryFS transparent encryption with Git. Files are written to a virtual mount point (~/odt) and encrypted on the fly into scrambled blocks in a physical vault (~/odt_encrypted), where Git tracks and pushes only the encrypted blocks to GitHub.',
+      whoIsItFor: 'Linux users and privacy-conscious developers who need absolute confidentiality against local root/sudo users and cloud providers.',
+      officialWebsite: 'https://www.cryfs.org',
+      version: 'CryFS 0.11+',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'cryfs-install-setup',
+        distro: 'Ubuntu',
+        title: '0. Install CryFS & Initialize Vault Setup',
+        command: `# Install CryFS and Git
+sudo apt update && sudo apt install -y cryfs git
+
+# Create the encrypted vault folder and virtual workspace mount point
+mkdir -p ~/odt_encrypted ~/odt
+
+# Initialize and mount CryFS (set a strong master password when prompted)
+cryfs ~/odt_encrypted ~/odt`,
+        verificationCommand: 'cryfs --version',
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~8 MB',
+        whyThisMethod: {
+          summary: 'Sets up the physical vault directory (~/odt_encrypted) and virtual workspace mount point (~/odt).',
+          points: [
+            'Official package installation via apt',
+            'Creates clean directory separation for ciphertext vs. plaintext',
+            'Enables on-the-fly block encryption'
+          ]
+        },
+        sourceUrl: 'https://www.cryfs.org'
+      },
+      {
+        id: 'migration-blueprint',
+        distro: 'Ubuntu',
+        title: '1. Initial Migration & Setup Blueprint',
+        command: `# 1. Purge Old Plain-Text Git History (if transitioning an existing folder)
+# Move into old folder and delete plain-text .git tracking folder to stop history leaks
+# rm -rf ~/old_folder/.git
+
+# 2. Safeguard Raw Data
+# Temporarily rename your original folder to clear the path
+# mv ~/old_folder ~/odt_backup
+
+# 3. Initialize the CryFS Vault & Mount Workspace
+cryfs ~/odt_encrypted ~/odt
+
+# 4. Restore Files into the Vault
+# Move all folders and files into the active ~/odt mount point
+# cp -r ~/odt_backup/* ~/odt/
+
+# 5. Set Up Encrypted Git Backups inside the scrambled vault
+cd ~
+umount ~/odt
+cd ~/odt_encrypted
+git init
+git remote add origin git@github.com:USERNAME/REPO.git
+git add .
+git commit -m "Initial encrypted vault setup"
+git push --force origin main`,
+        verificationCommand: 'git -C ~/odt_encrypted status',
+        isRecommended: true,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Transition an existing repository into an unbreakable local and cloud encryption setup without data loss.',
+          points: [
+            'Purges plain-text Git history to prevent past history leaks',
+            'Encrypts existing documents on the fly inside ~/odt_encrypted',
+            'Initializes Git directly on scrambled blocks and force pushes to wipe remote plaintext history'
+          ]
+        }
+      },
+      {
+        id: 'daily-unlock-workflow',
+        distro: 'Ubuntu',
+        title: '2A. Daily Workflow: Unlocking the Vault to Write',
+        command: `# Mount the encrypted folder to your virtual workspace
+cryfs ~/odt_encrypted ~/odt
+
+# Action: Enter your master password when prompted.
+# Open your file manager or terminal—your entire folder hierarchy and .odt files are now fully readable inside ~/odt.`,
+        verificationCommand: 'mount | grep cryfs',
+        isRecommended: true,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Mount the virtual workspace (~/odt) using your master password when working on diaries, checklists, or notes.',
+          points: [
+            'Decrypts blocks on the fly inside the ~/odt mount point',
+            'Full folder hierarchy and documents become readable to your user session'
+          ]
+        }
+      },
+      {
+        id: 'daily-lock-workflow',
+        distro: 'Ubuntu',
+        title: '2B. Daily Workflow: Locking the Vault (Defeating Sudo Users)',
+        command: `# 1. Step out of the workspace directory first
+cd ~
+
+# 2. Unmount the virtual workspace window
+umount ~/odt
+
+# Note: If the terminal says 'target is busy', ensure you have closed all text editors, LibreOffice windows, or other terminal sessions currently looking inside ~/odt. Once unmounted, ~/odt becomes completely empty.`,
+        verificationCommand: 'ls -A ~/odt',
+        isRecommended: true,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Unmount the workspace immediately after writing so local sudo users or root can see zero readable data.',
+          points: [
+            'Instantly strips readability leaving ~/odt completely empty',
+            'Prevents local root or sudo users from reading plaintext files'
+          ]
+        }
+      },
+      {
+        id: 'daily-backup-workflow',
+        distro: 'Ubuntu',
+        title: '2C. Daily Workflow: Backing Up to GitHub (Absolute Cloud Privacy)',
+        command: `# 1. Enter the encrypted vault directory (while ~/odt is locked or unlocked)
+cd ~/odt_encrypted
+
+# 2. Stage the newly generated encrypted data blocks
+git add .
+
+# 3. Commit the changes
+git commit -m "Secure phase update"
+
+# 4. Push the encrypted blocks to GitHub via SSH
+git push origin main`,
+        verificationCommand: 'git -C ~/odt_encrypted log -1',
+        isRecommended: true,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Back up encrypted data blocks to GitHub from ~/odt_encrypted so cloud servers never receive plain text.',
+          points: [
+            'Git tracks scrambled ciphertext blocks instead of raw files',
+            'Commit history contains zero plain text, ensuring absolute cloud privacy',
+            'Can be safely pushed to public or private cloud repositories'
+          ]
+        }
+      }
+    ],
+    problems: [
+      {
+        id: 'target-is-busy',
+        title: 'umount ~/odt fails with "target is busy"',
+        symptoms: [
+          'umount: /home/user/odt: target is busy.',
+          'Cannot lock workspace after finishing writing.'
+        ],
+        cause: 'A process (terminal session, file manager, LibreOffice, text editor) still has an open file handle or current working directory inside ~/odt.',
+        solution: 'Step out of the directory in all terminals and close applications reading inside ~/odt. Use lsof to identify blocking processes.',
+        commands: [
+          'cd ~',
+          'lsof +D ~/odt # Find processes using the mount point',
+          'umount ~/odt'
+        ],
+        verificationCommand: 'ls -A ~/odt',
+        explanation: 'Linux prevents unmounting any filesystem while processes maintain open file handles inside it.'
+      },
+      {
+        id: 'git-plaintext-leak',
+        title: 'Accidentally initializing Git inside ~/odt instead of ~/odt_encrypted',
+        symptoms: [
+          'Git commits show readable file names and text contents on GitHub',
+          'Plain text history exposed in remote repository'
+        ],
+        cause: 'Running git init or git push from the decrypted workspace (~/odt) instead of the scrambled vault directory (~/odt_encrypted).',
+        solution: 'Delete remote plaintext history, remove .git from ~/odt, and initialize Git exclusively inside ~/odt_encrypted.',
+        commands: [
+          'rm -rf ~/odt/.git # Remove plain-text Git repo',
+          'cd ~/odt_encrypted && git init',
+          'git add . && git commit -m "Encrypted vault tracking"',
+          'git push --force origin main # Overwrite remote plain-text history'
+        ],
+        verificationCommand: 'git -C ~/odt_encrypted status',
+        explanation: 'Git must always live in ~/odt_encrypted so it tracks scrambled CryFS ciphertext blocks rather than cleartext files.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'gocryptfs',
+        name: 'gocryptfs',
+        tag: 'Lightweight Alternative',
+        whyItExists: 'An encrypted overlay filesystem written in Go.',
+        compatibility: 'Excellent',
+        license: 'MIT',
+        resourceUsage: 'Low',
+        pros: [
+          'Fast performance',
+          '1:1 file encryption mapping'
+        ],
+        cons: [
+          'Exposes directory tree structure and number of files (unlike CryFS which chunks files into fixed blocks)'
+        ],
+        installCommand: 'sudo apt install gocryptfs'
+      },
+      {
+        id: 'veracrypt',
+        name: 'VeraCrypt',
+        tag: 'Open-Source Alternative',
+        whyItExists: 'Fixed-size container volume encryption tool.',
+        compatibility: 'Good',
+        license: 'Apache-2.0',
+        resourceUsage: 'Moderate',
+        pros: [
+          'Cross-platform container support',
+          'Plausible deniability features'
+        ],
+        cons: [
+          'Fixed container file size makes Git diffs and cloud sync inefficient compared to CryFS block chunks'
+        ]
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '~/odt_encrypted/cryfs.config', description: 'Encrypted CryFS filesystem metadata and cipher configuration header.' },
+      { type: 'Data Directory', path: '~/odt_encrypted/', description: 'Physical vault directory containing scrambled, encrypted blocks and the Git repository (.git).' },
+      { type: 'Data Directory', path: '~/odt/', description: 'Virtual mount point where decrypted plain-text files are accessible when unlocked.' }
+    ],
+    uninstall: {
+      normal: {
+        title: 'Unmount Workspace',
+        command: 'cd ~ && umount ~/odt',
+        description: 'Unmounts the virtual workspace window.'
+      },
+      removeConfig: {
+        title: 'Unmount & Remove Workspace Mount Point',
+        command: 'cd ~ && umount ~/odt && rmdir ~/odt',
+        description: 'Locks the vault and removes the virtual mount directory.'
+      },
+      completeCleanup: {
+        title: 'Complete Vault & Package Removal',
+        command: 'cd ~ && umount ~/odt && rm -rf ~/odt ~/odt_encrypted && sudo apt remove --purge -y cryfs',
+        description: 'Unmounts workspace, permanently deletes encrypted blocks and vault folder, and purges CryFS package.'
+      }
+    },
+    communityNotes: [
+      {
+        id: '18',
+        author: 'harsha',
+        date: '2026-07-11',
+        content: 'Always run Git inside ~/odt_encrypted so GitHub only receives scrambled blocks! When you finish writing, run umount ~/odt to lock out any local sudo users.',
+        upvotes: 88
+      }
+    ],
+    popularRank: 17,
+    dateAdded: '2026-07-11'
   }
 ];
 
