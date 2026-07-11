@@ -2113,6 +2113,314 @@ git push origin main`,
     ],
     popularRank: 17,
     dateAdded: '2026-07-11'
+  },
+  {
+    slug: 'bentopdf',
+    name: 'BentoPDF',
+    tagline: 'A privacy-first, client-side PDF toolkit built with modern web technologies.',
+    category: 'Productivity',
+    whyChoose: [
+      '100% client-side local PDF processing (files never leave your machine)',
+      'Modern web UI with fast preview and instant document operations',
+      'Can be built from source and run locally on port 4173',
+      'Open-source alternative to proprietary cloud PDF editors'
+    ],
+    overview: {
+      whatIsIt: 'BentoPDF is a clean, modern PDF utility suite designed for local document processing without uploading sensitive files to third-party cloud servers.',
+      whoIsItFor: 'Users and developers looking for a fast, self-hosted, local PDF editing and manipulation tool.',
+      officialWebsite: 'https://github.com/alam00000/bentopdf',
+      version: 'Latest Release',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'bentopdf-source',
+        distro: 'Ubuntu',
+        title: 'Build & Preview from Source',
+        command: `# Clone the repository
+git clone https://github.com/alam00000/bentopdf.git
+cd bentopdf
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# Package the distribution for hosting (optional)
+npm run package
+
+# Preview the build locally
+npm run preview
+
+# The website will be accessible at: http://localhost:4173/`,
+        verificationCommand: 'curl -I http://localhost:4173',
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~65 MB',
+        whyThisMethod: {
+          summary: 'Build and run BentoPDF directly from source using Node.js and npm.',
+          points: [
+            'Runs completely locally on port 4173',
+            'Generates production-ready distribution assets for self-hosting',
+            'Full source code visibility and privacy'
+          ]
+        },
+        sourceUrl: 'https://github.com/alam00000/bentopdf'
+      }
+    ],
+    problems: [
+      {
+        id: 'bentopdf-port-in-use',
+        title: 'Preview server fails to start because port 4173 is already in use',
+        symptoms: [
+          'Error: listen EADDRINUSE: address already in use 0.0.0.0:4173'
+        ],
+        cause: 'Another local process or previous vite preview session is still occupying port 4173.',
+        solution: 'Kill the process listening on port 4173 or specify a custom port flag.',
+        commands: [
+          'lsof -i :4173 # Find process using port 4173',
+          'kill -9 <PID>',
+          'npm run preview -- --port 4174 # Alternatively run on port 4174'
+        ],
+        verificationCommand: 'curl -I http://localhost:4173',
+        explanation: 'Freeing up port 4173 allows Vite preview server to bind cleanly.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'stirling-pdf',
+        name: 'Stirling-PDF',
+        tag: 'Open-Source Alternative',
+        whyItExists: 'Locally hosted web application for PDF manipulation and conversion.',
+        compatibility: 'Excellent',
+        license: 'MIT',
+        resourceUsage: 'Moderate',
+        pros: [
+          'Docker deployment ready',
+          'Rich suite of OCR and editing tools'
+        ],
+        cons: [
+          'Heavier Java/Spring backend footprint compared to pure client-side BentoPDF'
+        ]
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '~/bentopdf/package.json', description: 'Project dependencies and npm build scripts.' },
+      { type: 'Data Directory', path: '~/bentopdf/dist/', description: 'Compiled production bundle directory for static hosting.' }
+    ],
+    uninstall: {
+      normal: {
+        title: 'Stop Preview Server',
+        command: 'pkill -f "vite preview" || true',
+        description: 'Stops running local preview servers.'
+      },
+      removeConfig: {
+        title: 'Remove Build Output',
+        command: 'rm -rf ~/bentopdf/dist ~/bentopdf/node_modules',
+        description: 'Removes compiled artifacts and npm dependencies.'
+      },
+      completeCleanup: {
+        title: 'Delete BentoPDF Repository',
+        command: 'rm -rf ~/bentopdf',
+        description: 'Completely removes the BentoPDF repository from your home directory.'
+      }
+    },
+    communityNotes: [
+      {
+        id: '19',
+        author: 'harsha',
+        date: '2026-07-11',
+        content: 'Building from source lets you host BentoPDF locally so sensitive PDFs never touch an external server!',
+        upvotes: 45
+      }
+    ],
+    popularRank: 18,
+    dateAdded: '2026-07-11'
+  },
+  {
+    slug: 'fingerprint-tui-auth',
+    name: 'Fingerprint Biometric Authentication',
+    tagline: 'Configure hardware USB fingerprint sensors and integrate biometric authentication into Ubuntu Server / TUI and sudo.',
+    category: 'System & Drivers',
+    whyChoose: [
+      'Seamless biometric sudo execution directly in the terminal',
+      'Bypasses Polkit cookie errors on minimal TUI / headless sessions',
+      'System-wide PAM integration via pam-auth-update',
+      'Instant fallback to regular password prompt using Ctrl + C or Enter'
+    ],
+    overview: {
+      whatIsIt: 'Configures USB biometric fingerprint sensors using fprintd and integrates them into Linux PAM (Pluggable Authentication Modules), enabling fingerprint login at the console and biometric authorization for sudo.',
+      whoIsItFor: 'Ubuntu and Debian users running terminal-focused (TUI) or headless setups who want instant biometric sudo access without desktop Polkit prompts.',
+      officialWebsite: 'https://fprint.freedesktop.org',
+      version: 'fprintd 1.94+',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'fingerprint-driver-install',
+        distro: 'Ubuntu',
+        title: 'Phase 1: Driver Installation & Verification',
+        command: `# 1. Install the Core Biometric Packages
+# These tools manage the hardware sensor and integrate it into Linux's core authentication layer (PAM).
+sudo apt update && sudo apt install -y fprintd libpam-fprintd
+
+# 2. Verify Hardware Identification via USB
+# Look for structural entries like Elan, Synaptics, or Goodix Fingerprint Reader
+lsusb`,
+        verificationCommand: 'systemctl status fprintd',
+        isRecommended: true,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Installs the core libpam-fprintd daemon and verifies USB biometric hardware recognition.',
+          points: [
+            'Manages the hardware sensor and PAM layer integration',
+            'Confirms kernel USB interface recognition via lsusb'
+          ]
+        },
+        sourceUrl: 'https://fprint.freedesktop.org'
+      },
+      {
+        id: 'fingerprint-enroll-data',
+        distro: 'Ubuntu',
+        title: 'Phase 2: Enrolling Fingerprint Data (Bypassing Polkit)',
+        command: `# Because minimalist TUI sessions lack a background Polkit authentication window (causing 'No session for cookie' errors),
+# bypass Polkit by running enroll commands directly through sudo for your specific user account:
+
+# 1. Delete Any Corrupted/Bad Prints
+sudo fprintd-delete harsha
+
+# 2. Enroll the Fingerprint
+# Action: Firmly tap/swipe your right index finger multiple times, slightly varying the angle until the console reads 'Enroll result: enroll-completed'.
+sudo fprintd-enroll harsha
+
+# 3. Verify the Biometric Match
+sudo fprintd-verify harsha
+# Success Output: Verify result: verify-match (done)`,
+        verificationCommand: 'sudo fprintd-verify harsha',
+        isRecommended: true,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Enrolls and verifies biometric fingerprint data directly using sudo to prevent TUI Polkit session errors.',
+          points: [
+            'Bypasses "No session for cookie" Polkit errors on minimal console sessions',
+            'Clears old corrupted prints and verifies multi-angle enrollment'
+          ]
+        }
+      },
+      {
+        id: 'fingerprint-pam-tui',
+        distro: 'Ubuntu',
+        title: 'Phase 3: System-Wide TUI Integration',
+        command: `# 1. Run the PAM TUI Configurator
+sudo pam-auth-update
+
+# 2. Apply Settings:
+#   - Use arrow keys to navigate to 'Fingerprint authentication'.
+#   - Press Spacebar to ensure it is selected [*].
+#   - Press Tab to highlight <Ok>, then hit Enter.
+
+# Operational Result:
+#   - sudo Execution: Whenever you call 'sudo <command>', the terminal halts, flashes the sensor, and waits for a scan.
+#   - TUI Console Login: Typing username at Ubuntu TUI screen triggers hardware sensor immediately.
+#   - Bypass Routine: Hitting Ctrl + C or Enter immediately aborts biometric scan and drops to Password prompt.`,
+        verificationCommand: 'grep -i fprint /etc/pam.d/common-auth',
+        isRecommended: true,
+        isOfficial: true,
+        whyThisMethod: {
+          summary: 'Configures Ubuntu Server central PAM authentication architecture to deploy biometric prompts system-wide.',
+          points: [
+            'Enables fingerprint prompts on sudo execution and console TUI login',
+            'Supports instant abort/bypass via Ctrl + C or Enter to fall back to password prompt'
+          ]
+        }
+      }
+    ],
+    problems: [
+      {
+        id: 'polkit-cookie-error',
+        title: 'fprintd-enroll fails with "No session for cookie"',
+        symptoms: [
+          'fprintd-enroll: error: No session for cookie',
+          'Cannot enroll fingerprints in TUI session without a desktop environment'
+        ],
+        cause: 'Running fprintd-enroll as a standard user in a headless or minimal TUI session without an active Polkit authentication agent.',
+        solution: 'Prefix the fprintd command with sudo and specify your username explicitly.',
+        commands: [
+          'sudo fprintd-delete harsha',
+          'sudo fprintd-enroll harsha',
+          'sudo fprintd-verify harsha'
+        ],
+        verificationCommand: 'sudo fprintd-verify harsha',
+        explanation: 'Running via sudo elevates privileges directly, bypassing the Polkit user-session authentication check.'
+      },
+      {
+        id: 'sensor-not-recognized',
+        title: 'lsusb shows fingerprint reader but fprintd says "No devices available"',
+        symptoms: [
+          'Impossible to enroll: GDBus.Error:net.reactivated.Fprint.Error.NoSuchDevice: No devices available'
+        ],
+        cause: 'The proprietary sensor firmware or USB device ID is not supported by upstream libfprint or requires an open-source driver bridge.',
+        solution: 'Check supported device IDs on libfprint supported devices list or install vendor-specific libfprint drivers.',
+        commands: [
+          'lsusb | grep -i -E "fingerprint|elan|synaptics|goodix"',
+          'sudo systemctl restart fprintd'
+        ],
+        verificationCommand: 'fprintd-list harsha',
+        explanation: 'fprintd requires a compatible driver module in libfprint to initialize communication with USB biometric sensors.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'howdy',
+        name: 'Howdy (Windows Hello for Linux)',
+        tag: 'Open-Source Alternative',
+        whyItExists: 'IR camera facial recognition authentication for PAM.',
+        compatibility: 'Good',
+        license: 'MIT',
+        resourceUsage: 'Moderate',
+        pros: [
+          'Facial recognition login',
+          'Works with IR webcams'
+        ],
+        cons: [
+          'Requires webcam hardware'
+        ],
+        installCommand: 'sudo add-apt-repository ppa:boltgolt/howdy && sudo apt install howdy'
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '/etc/pam.d/common-auth', description: 'PAM authentication stack configured by pam-auth-update containing pam_fprintd.so.' },
+      { type: 'Systemd Service', path: '/usr/lib/systemd/system/fprintd.service', description: 'Systemd DBus service unit for the fingerprint management daemon.' }
+    ],
+    uninstall: {
+      normal: {
+        title: 'Disable Fingerprint in PAM',
+        command: 'sudo pam-auth-update --remove fprintd',
+        description: 'Removes pam_fprintd.so from the active PAM authentication stack.'
+      },
+      removeConfig: {
+        title: 'Delete Enrolled Fingerprints',
+        command: 'sudo fprintd-delete harsha',
+        description: 'Deletes stored biometric fingerprint templates for the user.'
+      },
+      completeCleanup: {
+        title: 'Complete Biometric Package Removal',
+        command: 'sudo pam-auth-update --remove fprintd && sudo apt remove --purge -y fprintd libpam-fprintd',
+        description: 'Disables PAM fingerprint module and purges fprintd packages completely.'
+      }
+    },
+    communityNotes: [
+      {
+        id: '20',
+        author: 'harsha',
+        date: '2026-07-11',
+        content: 'If you ever want to bypass the fingerprint prompt during sudo and type your password instead, just hit Ctrl + C or Enter right when it prompts you!',
+        upvotes: 95
+      }
+    ],
+    popularRank: 19,
+    dateAdded: '2026-07-11'
   }
 ];
 
