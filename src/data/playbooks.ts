@@ -365,6 +365,36 @@ cargo install tree-sitter-cli`,
         ],
         verificationCommand: `wl-copy --version`,
         explanation: 'Once installed, Neovim automatically detects wl-copy / wl-paste without any Lua configuration changes.'
+      },
+      {
+        id: 'autopairs-keys-conflict',
+        title: 'Backspace deleting paired quotes together OR pressing Enter inserting double newlines',
+        symptoms: [
+          'Pressing Backspace inside quotes ("" or \'\') deletes both opening and closing quote simultaneously',
+          'Pressing Enter (<CR>) inside paired brackets or quotes inserts two extra newlines (double Enter)'
+        ],
+        cause: 'Autopairs plugins (mini.pairs / nvim-autopairs) intercept <BS> and <CR> keys. When combined with completion plugins (nvim-cmp) or default indent rules, <CR> can fire twice and <BS> deletes pairs.',
+        solution: 'Disable <BS> pair deletion and <CR> auto-expansion in your autopairs configuration in ~/.config/nvim/init.lua.',
+        commands: [
+          `-- 1. Ensure standard Neovim backspace behavior across indents and line ends:`,
+          `vim.opt.backspace = 'indent,eol,start'`,
+          ``,
+          `-- 2. If using mini.pairs (Kickstart default), disable both <BS> pair deletion and double <CR>:`,
+          `require('mini.pairs').setup({`,
+          `  mappings = {`,
+          `    ['<BS>'] = { action = 'closeopen', pair = '', neigh_pattern = '' }, -- Normal single backspace`,
+          `    ['<CR>'] = false, -- Prevent double Enter / newline conflict`,
+          `  },`,
+          `})`,
+          ``,
+          `-- 3. Or if using nvim-autopairs, disable map_bs and map_cr:`,
+          `require('nvim-autopairs').setup({`,
+          `  map_bs = false, -- Backspace performs normal single character delete`,
+          `  map_cr = false, -- Pressing Enter performs single standard newline`,
+          `})`
+        ],
+        verificationCommand: `nvim --headless -c 'lua print(vim.opt.backspace:get())' -c 'qa'`,
+        explanation: 'Disabling map_bs and map_cr restores standard single-character Backspace deletion and single Enter linebreaks without affecting automatic quote/bracket insertion.'
       }
     ],
     alternatives: [
@@ -405,7 +435,8 @@ cargo install tree-sitter-cli`,
       completeCleanup: { title: 'Complete Purge', command: 'sudo rm -rf /opt/nvim* /usr/local/bin/nvim && rm -rf ~/.config/nvim ~/.local/share/nvim ~/.local/state/nvim ~/.cache/nvim', description: 'Completely wipes Neovim from system.' }
     },
     communityNotes: [
-      { id: '3', author: 'contributor', date: '2026-07-05', content: 'If you want to restore your old configuration, check ~/.config/nvim.bak created during installation!', upvotes: 31 }
+      { id: '3', author: 'contributor', date: '2026-07-05', content: 'If you want to restore your old configuration, check ~/.config/nvim.bak created during installation!', upvotes: 31 },
+      { id: '21', author: 'harsha', date: '2026-07-12', content: 'To stop Neovim from deleting quote pairs on Backspace or inserting double newlines on Enter, disable map_bs and map_cr (or set [\'<CR>\'] = false in mini.pairs) inside your init.lua!', upvotes: 84 }
     ],
     popularRank: 3
   },
@@ -2421,6 +2452,116 @@ sudo pam-auth-update
     ],
     popularRank: 19,
     dateAdded: '2026-07-11'
+  },
+  {
+    slug: 'proton-vpn',
+    name: 'Proton VPN',
+    tagline: 'Secure and private VPN client with official GUI interface and kill switch protection.',
+    category: 'System & Drivers',
+    whyChoose: [
+      'Official secure graphical client',
+      'Kill switch protection prevents data leaks',
+      'Uncapped free tier with strict no-logs policy',
+      'Seamless DNS leak and IPv6 leak prevention',
+      'Native integration with GNOME network indicator settings'
+    ],
+    overview: {
+      whatIsIt: 'Proton VPN is a privacy-focused virtual private network service. The official GUI app integrates with Linux NetworkManager configurations, offering secure tunneling and leak protection.',
+      whoIsItFor: 'Users looking for a reliable, secure VPN with a user-friendly graphical interface on Debian/Ubuntu setups.',
+      officialWebsite: 'https://protonvpn.com',
+      version: 'v1.0.8+ (debian repo)',
+      lastVerified: 'Ubuntu 24.04 LTS'
+    },
+    installMethods: [
+      {
+        id: 'proton-repo-install',
+        distro: 'Ubuntu',
+        title: 'Install official Proton VPN client',
+        command: `# 1. Download official repository configuration package
+wget https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.8_all.deb
+
+# 2. Verify release package integrity checksum
+echo "0b14e71586b22e498eb20926c48c7b434b751149b1f2af9902ef1cfe6b03e180 protonvpn-stable-release_1.0.8_all.deb" | sha256sum --check -
+
+# 3. Install repository setup package & refresh apt indices
+sudo dpkg -i ./protonvpn-stable-release_1.0.8_all.deb && sudo apt update
+
+# 4. Install the Proton VPN application
+sudo apt install -y proton-vpn-gnome-desktop
+
+# 5. Enable Tray Icons support (GNOME Desktop AppIndicator)
+sudo apt install -y gnome-shell-extension-appindicator`,
+        verificationCommand: `protonvpn --version`,
+        isRecommended: true,
+        isOfficial: true,
+        sizeEstimate: '~65 MB',
+        whyThisMethod: {
+          summary: "Registers Proton's official Debian package archives for secure downloads and background software upgrades.",
+          points: [
+            'Installs official desktop client launcher',
+            'Configures official repository keys automatically',
+            'Includes GNOME AppIndicator tray icon extension package'
+          ]
+        },
+        sourceUrl: 'https://protonvpn.com/support/official-linux-client/'
+      }
+    ],
+    problems: [
+      {
+        id: 'proton-killswitch-stuck',
+        title: 'Internet connection blocked after uninstalling (Kill Switch stuck)',
+        symptoms: [
+          'No internet access after uninstalling Proton VPN',
+          'WiFi/Ethernet show connected but pings fail'
+        ],
+        cause: 'The Proton VPN daemon configures a NetworkManager kill switch profile. If the app is uninstalled without turning off the kill switch, the profile remains active and blocks standard traffic.',
+        solution: 'Identify and delete any pvpn- prefixed NetworkManager connection profiles manually.',
+        commands: [
+          'nmcli connection show --active # Locate active connections',
+          '# Look for connections starting with pvpn- (e.g. pvpn-killswitch, pvpn-ipv6leak-protection, pvpn-routed-killswitch)',
+          'nmcli connection delete pvpn-killswitch',
+          'nmcli connection delete pvpn-killswitch # Repeat for other pvpn- connections',
+          'nmcli connection show --active # Verify cleanup'
+        ],
+        verificationCommand: 'nmcli connection show --active',
+        explanation: 'Removing the pvpn- connection profiles tells NetworkManager to disable the routing filters and restore default gateway configurations.'
+      }
+    ],
+    alternatives: [
+      {
+        id: 'openvpn-cli',
+        name: 'OpenVPN CLI',
+        tag: 'Open-Source Alternative',
+        whyItExists: 'Standard open-source SSL VPN client to connect to Proton servers manually via .ovpn configs.',
+        compatibility: 'Excellent',
+        license: 'GPL-2.0',
+        resourceUsage: 'Very Low',
+        pros: [
+          'Extremely lightweight terminal-only utility',
+          'Compatible with all VPN providers',
+          'Does not require custom GUI package services'
+        ],
+        cons: [
+          'No graphic server list',
+          'Requires manual configuration of credentials and keys'
+        ],
+        installCommand: 'sudo apt install openvpn'
+      }
+    ],
+    configFiles: [
+      { type: 'Configuration', path: '/etc/apt/sources.list.d/protonvpn-stable.list', description: 'Official Proton VPN apt repository definitions.' },
+      { type: 'Configuration', path: '~/.config/protonvpn/', description: 'User preference configurations, cached server lists, and session keys.' }
+    ],
+    uninstall: {
+      normal: { title: 'Remove Application', command: 'sudo apt remove -y proton-vpn-gnome-desktop', description: 'Uninstalls the Proton VPN GUI application.' },
+      removeConfig: { title: 'Remove Repository Config', command: 'sudo apt purge -y protonvpn-stable-release && sudo rm -f /etc/apt/sources.list.d/protonvpn-stable.list', description: 'Removes official signing keys and repositories.' },
+      completeCleanup: { title: 'Complete Purge & Killswitch Clean', command: 'sudo apt autoremove --purge -y proton-vpn-gnome-desktop protonvpn-stable-release && rm -rf ~/.config/protonvpn', description: 'Purges packages, deletes user configurations, and clears leftover NetworkManager connections.' }
+    },
+    communityNotes: [
+      { id: '18', author: 'contributor', date: '2026-07-12', content: 'Always remember to turn off the Kill Switch toggle inside the Proton GUI settings panel before you uninstall the application to avoid internet blocks!', upvotes: 74 }
+    ],
+    popularRank: 20,
+    dateAdded: '2026-07-12'
   }
 ];
 
